@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.jacob</groupId>
+    <artifactId>pet-health</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>pet-health</name>
+    <description>pet-health</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- 父模块的打包方式-->
+    <packaging>pom</packaging>
+    <!-- parent指明继承关系 给出被继承的父项目具体信息-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.8</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+
+    <modules>
+        <module>web</module>
+        <module>service</module>
+        <module>dao</module>
+        <module>common</module>
+        <module>api</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!--        <dependency>-->
+            <!--            <groupId>org.springframework.boot</groupId>-->
+            <!--            <artifactId>spring-boot-starter</artifactId>-->
+            <!--        </dependency>-->
+
+            <!--        <dependency>-->
+            <!--            <groupId>org.springframework.boot</groupId>-->
+            <!--            <artifactId>spring-boot-starter-test</artifactId>-->
+            <!--            <scope>test</scope>-->
+            <!--        </dependency>-->
+
+            <dependency>
+                <groupId>com.jacob</groupId>
+                <artifactId>web</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jacob</groupId>
+                <artifactId>service</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jacob</groupId>
+                <artifactId>dao</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jacob</groupId>
+                <artifactId>common</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jacob</groupId>
+                <artifactId>api</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+
+</project>
