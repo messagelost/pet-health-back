@@ -1,30 +1,54 @@
 package com.jacob.service.base;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.jacob.common.model.base.PageResult;
 
 import java.util.List;
+import java.util.Map;
 
-/**
- * 基础服务类
- * @param <T>
- */
-public interface BaseService<T> {
+public interface BaseService<T> extends IService<T> {
 
+    /**
+     * 根据id删除
+     */
+    <T> int deleteById(String id);
 
-    boolean save(T entity);
+    /**
+     * 批量根据id删除
+     */
+    <T> int deleteByIds(String[] id);
+    /**
+     * 新增记录
+     */
+    <T> int insertWithBean(T record);
 
+    /**
+     * 根据id查询记录
+     */
+    <T> T findBeanById(String id);
 
-    boolean removeById(String id);
+    /**
+     * 更新信息
+     */
+    <T> int updateWithBean(T record);
 
+    /**
+     * 根据条件查询所有记录
+     */
+    <T> List<T> selectAllList(Map<String, Object> params);
 
-    boolean updateById(T entity);
+    /**
+     * 根据条件分页查询记录
+     */
+    PageResult<T> selectPageList(Map<String, Object> params);
 
+    /**
+     * 查询总数
+     */
+    <T> int getCount(Map<String, Object> params);
 
-    T getById(String id);
-
-
-    List<T> list();
-
-
-    PageResult<T> page(int pageNum, int pageSize);
+    /**
+     * 导出数据
+     */
+    List<Map<String, Object>> exportData(Map<String, Object> params);
 }
