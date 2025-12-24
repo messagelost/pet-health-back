@@ -1,19 +1,22 @@
 package com.jacob.web;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.jacob.common.model.base.ResponseVO;
 import com.jacob.common.model.user.entity.SysUserInfo;
 import com.jacob.common.utils.SnowflakeIdGenerator;
 import com.jacob.service.user.userInfo.SysUserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
     @Autowired
     private SysUserInfoService sysUserInfoService;
@@ -21,8 +24,8 @@ public class UserController {
     @Autowired
     private SnowflakeIdGenerator customSnowflakeIdGenerator;
 
-    @GetMapping("/user/{name}")
-    public String user(@PathVariable String name){
+    @GetMapping("/add/{name}")
+    public ResponseVO<String> user(@PathVariable String name){
         LocalDate now = LocalDate.now();
 
         SysUserInfo sysUserInfo = new SysUserInfo();
@@ -36,11 +39,14 @@ public class UserController {
         sysUserInfo.setUpdateTime(now);
         sysUserInfoService.save(sysUserInfo);
 
-        return name;
+        return new ResponseVO<>();
     }
 
     @GetMapping("/getUser")
-    public List<SysUserInfo> getUser(){
-        return sysUserInfoService.list(new LambdaQueryWrapper<SysUserInfo>().select(SysUserInfo::getUserId,SysUserInfo::getUsername));
+    public ResponseVO<List<SysUserInfo>> getUser(){
+        ResponseVO<List<SysUserInfo>> responseVO = new ResponseVO<>();
+        responseVO.setData(sysUserInfoService.list(new LambdaQueryWrapper<SysUserInfo>().select(SysUserInfo::getUserId,SysUserInfo::getUsername)));
+        return responseVO;
     }
+
 }
