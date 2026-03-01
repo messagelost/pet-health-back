@@ -34,6 +34,12 @@ public class PetHealthIndicatorRule extends BaseEntity {
     private String breedId;
 
     /**
+     * 品种名称
+     */
+    @TableField(exist = false)
+    private String breedName;
+
+    /**
      * 指标ID（关联pet_health_indicator表的indicator_id）
      */
     @TableField
@@ -50,6 +56,12 @@ public class PetHealthIndicatorRule extends BaseEntity {
      */
     @TableField
     private String lifeStage;
+
+    /**
+     * 生命周期阶段
+     */
+    @TableField
+    private String lifeStageName;
 
     /**
      * 最小值

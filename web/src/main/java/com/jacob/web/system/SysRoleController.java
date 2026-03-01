@@ -7,6 +7,7 @@ import com.jacob.common.model.author.entity.SysRole;
 import com.jacob.common.model.base.PageQuery;
 import com.jacob.common.model.base.PageResult;
 import com.jacob.common.model.base.ResponseVO;
+import com.jacob.common.utils.JwtUtil;
 import com.jacob.common.utils.SnowflakeIdGenerator;
 import com.jacob.service.author.SysMenuRoleService;
 import com.jacob.service.author.SysRoleService;
@@ -31,6 +32,8 @@ public class SysRoleController {
     private SysUserRoleService sysUserRoleService;
     @Autowired
     private SysMenuRoleService sysMenuRoleService;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping
     @RequiresPermissions("system:sysRole:add")
@@ -78,5 +81,13 @@ public class SysRoleController {
     public ResponseVO<List<SysMenu>> getRoleMenu(@PathVariable("id") String roleId){
         List<SysMenu> result = sysMenuRoleService.selectMenuByRoleId(roleId);
         return ResponseVO.success(result);
+    }
+
+    @GetMapping("/clearCache")
+    @ApiPermission(code = "system:sysRole:clearCache", name = "清除角色缓存")
+    @RequiresPermissions("system:sysRole:clearCache")
+    public ResponseVO<?> clearCache(){
+        sysUserRoleService.clearCache();
+        return ResponseVO.success();
     }
 }

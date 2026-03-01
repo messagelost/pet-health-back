@@ -62,9 +62,9 @@ public class JwtRealm extends AuthorizingRealm {
         log.info("授权用户ID：{}", userId);
 
         // 查询用户的角色
-        Set<String> roles = sysUserRoleService.listUserRoles(userId).stream().map(SysUserRole::getRoleStr).collect(Collectors.toSet());
+        Set<String> roles = sysUserRoleService.listUserRolesInCache(userId).stream().map(SysUserRole::getRoleStr).collect(Collectors.toSet());
         // 查询用户的权限
-        Set<String> permissions = sysMenuService.listMenuByUserId(userId).stream().map(SysMenu::getAuthorStr).collect(Collectors.toSet());
+        Set<String> permissions = sysMenuService.listMenuByUserIdInCache(userId).stream().map(SysMenu::getAuthorStr).collect(Collectors.toSet());
         log.info("授权角色：{}", roles);
 
         // 封装角色和权限信息

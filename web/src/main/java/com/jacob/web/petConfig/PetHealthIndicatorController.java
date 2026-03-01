@@ -1,14 +1,17 @@
 package com.jacob.web.petConfig;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.jacob.common.annotation.ApiPermission;
 import com.jacob.common.model.base.PageQuery;
 import com.jacob.common.model.base.PageResult;
 import com.jacob.common.model.base.ResponseVO;
 import com.jacob.common.model.petConfig.entity.PetBreed;
 import com.jacob.common.model.petConfig.entity.PetHealthIndicator;
+import com.jacob.common.model.petConfig.entity.PetHealthIndicatorRule;
 import com.jacob.common.utils.JwtUtil;
 import com.jacob.common.utils.SnowflakeIdGenerator;
+import com.jacob.service.petConfig.PetHealthIndicatorRuleService;
 import com.jacob.service.petConfig.PetHealthIndicatorService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,8 @@ public class PetHealthIndicatorController {
     private JwtUtil jwtUtil;
     @Autowired
     private PetHealthIndicatorService petHealthIndicatorService;
+    @Autowired
+    private PetHealthIndicatorRuleService petHealthIndicatorRuleService;
 
     @PostMapping
     @RequiresPermissions("petConfig:petHealthIndicator:add")
@@ -55,6 +60,7 @@ public class PetHealthIndicatorController {
     @DeleteMapping("/{id}")
     public ResponseVO<?> delete(@PathVariable("id") String indicatorId){
         petHealthIndicatorService.deleteById(indicatorId);
+        petHealthIndicatorRuleService.remove(new LambdaQueryWrapper<PetHealthIndicatorRule>().eq(PetHealthIndicatorRule::getIndicatorId, indicatorId));
         return ResponseVO.success();
     }
 

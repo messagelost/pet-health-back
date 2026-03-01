@@ -9,6 +9,7 @@ import com.jacob.common.model.base.PageResult;
 import com.jacob.common.model.base.ResponseVO;
 import com.jacob.common.utils.JwtUtil;
 import com.jacob.service.author.SysMenuService;
+import com.jacob.service.author.SysUserRoleService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,15 @@ public class SysMenuController{
     private JwtUtil jwtUtil;
     @Autowired
     private SysMenuService sysMenuService;
+    @Autowired
+    private SysUserRoleService sysUserRoleService;
 
     @GetMapping("/listMenu")
     public ResponseVO<List<SysMenu>> listMenu(HttpServletRequest request){
         // 从请求头获取
         String userId = jwtUtil.getCurrentUserId();
 
-        List<SysMenu> result = sysMenuService.listMenuByUserId(userId)
+        List<SysMenu> result = sysMenuService.listMenuByUserIdInCache(userId)
                 .stream()
                 .filter(m -> !Objects.equals(m.getMenuType(), MenuType.BUTTON.getCode())).toList();
         return ResponseVO.success(result);

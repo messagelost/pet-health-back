@@ -7,10 +7,12 @@ import com.jacob.common.model.author.entity.SysRole;
 import com.jacob.common.model.base.PageQuery;
 import com.jacob.common.model.base.PageResult;
 import com.jacob.common.model.base.ResponseVO;
+import com.jacob.common.model.petConfig.entity.PetBreed;
 import com.jacob.common.model.petConfig.entity.PetLifeStage;
 import com.jacob.common.model.petConfig.entity.PetSpecies;
 import com.jacob.common.utils.JwtUtil;
 import com.jacob.common.utils.SnowflakeIdGenerator;
+import com.jacob.service.petConfig.PetBreedService;
 import com.jacob.service.petConfig.PetLifeStageService;
 import com.jacob.service.petConfig.PetSpeciesService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -33,6 +35,8 @@ public class PetSpeciesController {
     private PetLifeStageService petLifeStageService;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private PetBreedService petBreedService;
 
     @PostMapping
     @RequiresPermissions("petConfig:petSpecies:add")
@@ -89,6 +93,18 @@ public class PetSpeciesController {
     @ApiPermission(code = "petConfig:petSpecies:listStages", name = "查询宠物生命周期")
     @GetMapping("/listStages/{id}")
     public ResponseVO<List<PetLifeStage>> listStages(@PathVariable("id") String speciesId){
+        List<PetLifeStage> result = petLifeStageService.list(new LambdaQueryWrapper<PetLifeStage>()
+                .eq(PetLifeStage::getSpeciesId, speciesId)
+                .orderByAsc(PetLifeStage::getSort)
+        );
+        return ResponseVO.success(result);
+    }
+
+    @RequiresPermissions("petConfig:petSpecies:listStagesByBreed")
+    @ApiPermission(code = "petConfig:petSpecies:listStagesByBreed", name = "品种查询宠物生命周期")
+    @GetMapping("/listStagesByBreed/{id}")
+    public ResponseVO<List<PetLifeStage>> listStagesByBreed(@PathVariable("id") String breedId){
+        String speciesId = petBreedService.getOne(new LambdaQueryWrapper<PetBreed>().eq(PetBreed::getBreedId, breedId)).getSpeciesId();
         List<PetLifeStage> result = petLifeStageService.list(new LambdaQueryWrapper<PetLifeStage>()
                 .eq(PetLifeStage::getSpeciesId, speciesId)
                 .orderByAsc(PetLifeStage::getSort)

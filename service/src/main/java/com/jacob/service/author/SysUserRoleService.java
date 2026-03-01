@@ -8,4 +8,8 @@ import java.util.List;
 
 public interface SysUserRoleService extends BaseService<SysUserRole> {
     List<SysUserRole> listUserRoles(String userId);
+
+    List<SysUserRole> listUserRolesInCache(String userId);
+
+    void clearCache();
 }

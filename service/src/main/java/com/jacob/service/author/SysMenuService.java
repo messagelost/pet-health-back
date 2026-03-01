@@ -11,5 +11,9 @@ import java.util.Map;
 public interface SysMenuService extends BaseService<SysMenu> {
     List<SysMenu> listMenuByUserId(String userId);
 
+    List<SysMenu> listMenuByUserIdInCache(String userId);
+
     void registerMenu(String code, String name);
+
+    void clearCache(String userId);
 }

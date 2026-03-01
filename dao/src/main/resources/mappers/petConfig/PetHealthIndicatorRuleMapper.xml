@@ -19,6 +19,9 @@
         <result property="updateTime" column="update_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
+
+        <result property="breedName" column="breed_name"/>
+        <result property="lifeStageName" column="life_stage_name"/>
     </resultMap>
 
     <!-- 基础字段列表：用于查询语句复用 -->
@@ -178,8 +181,10 @@
     <!-- 查询规则列表（带条件） -->
     <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>,pb.breed_name AS breed_name,pl.stage_name AS life_stage_name
         FROM pet_health_indicator_rule phir
+        LEFT JOIN pet_breed pb ON phir.breed_id = pb.breed_id
+        LEFT JOIN pet_life_stage pl ON phir.life_stage = pl.stage_id
         <where>
             <if test="breedId != null and breedId != ''">
                 AND phir.breed_id = #{breedId}

@@ -1,10 +1,16 @@
 package com.jacob.service.author.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jacob.common.model.author.entity.SysMenu;
+import com.jacob.common.model.author.entity.SysUserRole;
 import com.jacob.common.model.author.enums.MenuType;
 import com.jacob.common.model.base.PageResult;
+import com.jacob.common.redis.RedisConstant;
+import com.jacob.common.redis.RedisUtils;
 import com.jacob.common.utils.SnowflakeIdGenerator;
 import com.jacob.dao.base.SqlDao;
 import com.jacob.dao.mappers.author.SysMenuDao;
@@ -20,6 +26,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,6 +37,10 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenu> imp
     private SysMenuDao sysMenuDao;
     @Autowired
     private SnowflakeIdGenerator snowflakeIdGenerator;
+    @Autowired
+    private RedisUtils redisUtils;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public SqlDao getDao() {
@@ -38,6 +50,30 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenu> imp
     @Override
     public List<SysMenu> listMenuByUserId(String userId) {
         return sysMenuDao.selectMenuByUserId(userId);
+    }
+
+    @Override
+    public List<SysMenu> listMenuByUserIdInCache(String userId) {
+        String redisKey = RedisConstant.USER_MENUS.getCode() + userId;
+        List<Object> list = redisUtils.getQueueList(redisKey);
+        if (list != null && !list.isEmpty()) {
+            return list.stream()
+                    .filter(Objects::nonNull)
+                    .map(obj -> {
+                        try {
+                            String jsonStr = obj instanceof String ? (String) obj : objectMapper.writeValueAsString(obj);
+                            return objectMapper.readValue(jsonStr, SysMenu.class);
+                        } catch (JsonProcessingException e) {
+                            log.error(e.getMessage());
+                            return null;
+                        }
+                    })
+                    .collect(Collectors.toList());
+        }else{
+            List<SysMenu> result = listMenuByUserId(userId);
+            redisUtils.lSet(redisKey, result.stream().map(menu -> (Object) menu).collect(Collectors.toList()), 7200);
+            return result;
+        }
     }
 
     @Override
@@ -125,6 +161,12 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenu> imp
             menu.setUpdateUserId("admin");
             save(menu);
         }
+    }
+
+    @Override
+    public void clearCache(String userId) {
+        String redisKey = RedisConstant.USER_MENUS.getCode() + userId;
+        redisUtils.del(redisKey);
     }
 
 }

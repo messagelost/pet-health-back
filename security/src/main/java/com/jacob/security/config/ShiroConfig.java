@@ -51,7 +51,7 @@ public class ShiroConfig {
 
         // URL 权限规则
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        // TODO 放行：登录接口、注册接口、静态资源
+        // 放行：登录接口、注册接口、静态资源
         filterChainDefinitionMap.put("/api/auth/login", "anon");
         filterChainDefinitionMap.put("/api/auth/register", "anon");
         filterChainDefinitionMap.put("/static/**", "anon");
