@@ -1,10 +1,12 @@
 package com.jacob.common.model.base;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * 基础实体类
@@ -18,22 +20,38 @@ public class BaseEntity implements Serializable {
     /**
      * 创建时间
      */
-    private LocalDate createTime;
+    @TableField
+    private LocalDateTime createTime;
 
     /**
      * 修改时间
      */
-    private LocalDate updateTime;
+    @TableField
+    private LocalDateTime updateTime;
+
+    /**
+     * 创建人id
+     */
+    @TableField
+    private String createUserId;
+
+    /**
+     * 修改人id
+     */
+    @TableField
+    private String updateUserId;
 
     /**
      * 创建人
      */
-    private String createUser;
+    @TableField(exist = false)
+    private String createUserName;
 
     /**
      * 修改人
      */
-    private String updateUser;
+    @TableField(exist = false)
+    private String updateUserName;
 
 
 }

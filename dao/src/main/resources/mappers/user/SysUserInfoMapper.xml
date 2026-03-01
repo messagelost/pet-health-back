@@ -17,14 +17,14 @@
         <result column="last_login_ip" property="lastLoginIp"/>
 
         <result column="create_time" property="createTime"/>
-        <result column="create_user" property="createUser"/>
+        <result column="create_user_id" property="createUserId"/>
         <result column="update_time" property="updateTime"/>
-        <result column="update_user" property="updateUser"/>
+        <result column="update_user_id" property="updateUserId"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         user_id, username, nickname, avatar, phone, email, gender, birthday,
-        status, last_login_time, last_login_ip, create_time, create_user, update_time, update_user
+        status, last_login_time, last_login_ip, create_time, create_user_id, update_time, update_user_id
     </sql>
 
     <insert id="insertWithBean" parameterType="com.jacob.common.model.user.entity.SysUserInfo">
@@ -59,12 +59,12 @@
                 status,
             </if>
             create_time,
-            <if test="createUser != null and createUser != ''">
-                create_user,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
             </if>
             update_time,
-            <if test="updateUser != null and updateUser != ''">
-                update_user,
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
             </if>
         </trim>
         VALUES
@@ -97,12 +97,12 @@
                 #{status},
             </if>
             NOW(),
-            <if test="createUser != null and createUser != ''">
-                #{createUser},
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
             </if>
             NOW(),
-            <if test="updateUser != null and updateUser != ''">
-                #{updateUser},
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
             </if>
         </trim>
 
@@ -123,7 +123,7 @@
             <if test="lastLoginTime != null">last_login_time = #{lastLoginTime},</if>
             <if test="lastLoginIp != null and lastLoginIp != ''">last_login_ip = #{lastLoginIp},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
-            <if test="updateUser != null and updateUser != ''">update_user = #{updateUser}</if>
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId}</if>
         </set>
         WHERE user_id = #{userId}
     </update>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.PetNutritionConfigDao">
+
+    <!-- 基础结果映射：对应PetNutritionConfig实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.PetNutritionConfig">
+        <id property="configId" column="config_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="nutritionName" column="nutrition_name"/>
+        <result property="unit" column="unit"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 树形结构结果映射：包含子级列表 -->
+    <resultMap id="TreeResultMap" type="com.jacob.common.model.petConfig.entity.PetNutritionConfig" extends="BaseResultMap">
+        <collection property="children" ofType="com.jacob.common.model.petConfig.entity.PetNutritionConfig"
+                    select="selectByParentId" column="config_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pnc.config_id,
+        pnc.parent_id,
+        pnc.nutrition_name,
+        pnc.unit,
+        pnc.create_time,
+        pnc.update_time,
+        pnc.create_user_id,
+        pnc.update_user_id
+    </sql>
+
+    <!-- 新增营养成分配置 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetNutritionConfig">
+        INSERT INTO pet_nutrition_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="configId != null and configId != ''">
+                config_id,
+            </if>
+            <if test="parentId != null and parentId != ''">
+                parent_id,
+            </if>
+            <if test="nutritionName != null">
+                nutrition_name,
+            </if>
+            <if test="unit != null">
+                unit,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="configId != null and configId != ''">
+                #{configId},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                #{parentId},
+            </if>
+            <if test="nutritionName != null">
+                #{nutritionName},
+            </if>
+            <if test="unit != null">
+                #{unit},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新营养成分配置 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetNutritionConfig">
+        UPDATE pet_nutrition_config
+        <set>
+            <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
+            <if test="nutritionName != null">nutrition_name = #{nutritionName},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE config_id = #{configId}
+    </update>
+
+    <!-- 根据主键删除营养成分配置 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_nutrition_config WHERE config_id = #{configId}
+    </delete>
+
+    <!-- 批量删除营养成分配置 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_nutrition_config
+        WHERE config_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计营养成分配置数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_nutrition_config
+        <where>
+            <if test="parentId != null and parentId != ''">
+                AND parent_id = #{parentId}
+            </if>
+            <if test="nutritionName != null">
+                AND nutrition_name = #{nutritionName}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询营养成分配置列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_nutrition_config pnc
+        <where>
+            <if test="parentId != null and parentId != ''">
+                AND pnc.parent_id = #{parentId}
+            </if>
+            <if test="nutritionName != null">
+                AND pnc.nutrition_name = #{nutritionName}
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 按父级ID查询子级营养成分（树形结构查询） -->
+    <select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_nutrition_config pnc
+        WHERE pnc.parent_id = #{parentId}
+        ORDER BY pnc.create_time ASC
+    </select>
+
+    <!-- 查询所有顶级营养成分（parent_id为空或-1） -->
+    <select id="selectTopLevelList" resultMap="TreeResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_nutrition_config pnc
+        WHERE pnc.parent_id IS NULL OR pnc.parent_id = '-1'
+        ORDER BY pnc.create_time ASC
+    </select>
+
+</mapper>

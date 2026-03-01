@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.PetKeepingAdviceDao">
+
+    <!-- 基础结果映射：对应PetKeepingAdvice实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.PetKeepingAdvice">
+        <id property="adviceId" column="advice_id"/>
+        <result property="breedId" column="breed_id"/>
+        <result property="lifeStage" column="life_stage"/>
+        <result property="adviceType" column="advice_type"/>
+        <result property="adviceContent" column="advice_content"/>
+        <result property="adviceFrequency" column="advice_frequency"/>
+        <result property="remark" column="remark"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pka.advice_id,
+        pka.breed_id,
+        pka.life_stage,
+        pka.advice_type,
+        pka.advice_content,
+        pka.advice_frequency,
+        pka.remark,
+        pka.create_time,
+        pka.update_time,
+        pka.create_user_id,
+        pka.update_user_id
+    </sql>
+
+    <!-- 新增饲养建议 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetKeepingAdvice">
+        INSERT INTO pet_keeping_advice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adviceId != null and adviceId != ''">
+                advice_id,
+            </if>
+            <if test="breedId != null and breedId != ''">
+                breed_id,
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                life_stage,
+            </if>
+            <if test="adviceType != null">
+                advice_type,
+            </if>
+            <if test="adviceContent != null and adviceContent != ''">
+                advice_content,
+            </if>
+            <if test="adviceFrequency != null and adviceFrequency != ''">
+                advice_frequency,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adviceId != null and adviceId != ''">
+                #{adviceId},
+            </if>
+            <if test="breedId != null and breedId != ''">
+                #{breedId},
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                #{lifeStage},
+            </if>
+            <if test="adviceType != null">
+                #{adviceType},
+            </if>
+            <if test="adviceContent != null and adviceContent != ''">
+                #{adviceContent},
+            </if>
+            <if test="adviceFrequency != null and adviceFrequency != ''">
+                #{adviceFrequency},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新饲养建议 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetKeepingAdvice">
+        UPDATE pet_keeping_advice
+        <set>
+            <if test="breedId != null and breedId != ''">breed_id = #{breedId},</if>
+            <if test="lifeStage != null and lifeStage != ''">life_stage = #{lifeStage},</if>
+            <if test="adviceType != null">advice_type = #{adviceType},</if>
+            <if test="adviceContent != null and adviceContent != ''">advice_content = #{adviceContent},</if>
+            <if test="adviceFrequency != null and adviceFrequency != ''">advice_frequency = #{adviceFrequency},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE advice_id = #{adviceId}
+    </update>
+
+    <!-- 根据主键删除建议 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_keeping_advice WHERE advice_id = #{adviceId}
+    </delete>
+
+    <!-- 批量删除建议 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_keeping_advice
+        WHERE advice_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计建议数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_keeping_advice
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND breed_id = #{breedId}
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                AND life_stage = #{lifeStage}
+            </if>
+            <if test="adviceType != null">
+                AND advice_type = #{adviceType}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询建议列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_keeping_advice pka
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND pka.breed_id = #{breedId}
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                AND pka.life_stage = #{lifeStage}
+            </if>
+            <if test="adviceType != null">
+                AND pka.advice_type = #{adviceType}
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 按品种+生命周期+建议类型查询建议（核心业务快捷查询） -->
+    <select id="selectByBreedLifeStageType" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_keeping_advice pka
+        WHERE pka.breed_id = #{breedId}
+        AND pka.life_stage = #{lifeStage}
+        AND pka.advice_type = #{adviceType}
+        ORDER BY pka.create_time DESC
+    </select>
+
+</mapper>

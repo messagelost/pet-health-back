@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.author.SysMenuRoleDao">
+    <select id="selectMenuByRoleId" resultType="com.jacob.common.model.author.entity.SysMenu">
+        select
+            m.menu_id,
+            m.parent_id,
+            m.`name`,
+            m.title,
+            m.menu_type,
+            m.`path`,
+            m.redirect,
+            m.component,
+            m.author_str,
+            m.icon,
+            m.`order`,
+            m.visible,
+            m.status
+        from sys_menu_role smr
+        left join sys_menu m on smr.menu_id = m.menu_id
+        where smr.role_id = #{roleId}
+    </select>
+</mapper>

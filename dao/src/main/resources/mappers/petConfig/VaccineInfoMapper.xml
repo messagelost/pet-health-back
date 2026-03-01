@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.VaccineInfoDao">
+
+    <!-- 基础结果映射：对应VaccineInfo实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.VaccineInfo">
+        <id property="vaccineId" column="vaccine_id"/>
+        <result property="vaccineName" column="vaccine_name"/>
+        <result property="vaccineShort" column="vaccine_short"/>
+        <result property="cost" column="cost"/>
+        <result property="breedIds" column="breed_ids"/>
+        <result property="manufacturer" column="manufacturer"/>
+        <result property="validityPeriod" column="validity_period"/>
+        <result property="periodUnit" column="period_unit"/>
+        <result property="injectionTimes" column="injection_times"/>
+        <result property="intervalDays" column="interval_days"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        vi.vaccine_id,
+        vi.vaccine_name,
+        vi.vaccine_short,
+        vi.cost,
+        vi.breed_ids,
+        vi.manufacturer,
+        vi.validity_period,
+        vi.period_unit,
+        vi.injection_times,
+        vi.interval_days,
+        vi.create_time,
+        vi.update_time,
+        vi.create_user_id,
+        vi.update_user_id
+    </sql>
+
+    <!-- 新增疫苗信息 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.VaccineInfo">
+        INSERT INTO vaccine_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vaccineId != null and vaccineId != ''">
+                vaccine_id,
+            </if>
+            <if test="vaccineName != null and vaccineName != ''">
+                vaccine_name,
+            </if>
+            <if test="vaccineShort != null and vaccineShort != ''">
+                vaccine_short,
+            </if>
+            <if test="cost != null">
+                cost,
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                breed_ids,
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                manufacturer,
+            </if>
+            <if test="validityPeriod != null">
+                validity_period,
+            </if>
+            <if test="periodUnit != null">
+                period_unit,
+            </if>
+            <if test="injectionTimes != null and injectionTimes != ''">
+                injection_times,
+            </if>
+            <if test="intervalDays != null">
+                interval_days,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vaccineId != null and vaccineId != ''">
+                #{vaccineId},
+            </if>
+            <if test="vaccineName != null and vaccineName != ''">
+                #{vaccineName},
+            </if>
+            <if test="vaccineShort != null and vaccineShort != ''">
+                #{vaccineShort},
+            </if>
+            <if test="cost != null">
+                #{cost},
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                #{breedIds},
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                #{manufacturer},
+            </if>
+            <if test="validityPeriod != null">
+                #{validityPeriod},
+            </if>
+            <if test="periodUnit != null">
+                #{periodUnit},
+            </if>
+            <if test="injectionTimes != null and injectionTimes != ''">
+                #{injectionTimes},
+            </if>
+            <if test="intervalDays != null">
+                #{intervalDays},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新疫苗信息 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.VaccineInfo">
+        UPDATE vaccine_info
+        <set>
+            <if test="vaccineName != null and vaccineName != ''">vaccine_name = #{vaccineName},</if>
+            <if test="vaccineShort != null and vaccineShort != ''">vaccine_short = #{vaccineShort},</if>
+            <if test="cost != null">cost = #{cost},</if>
+            <if test="breedIds != null and breedIds != ''">breed_ids = #{breedIds},</if>
+            <if test="manufacturer != null and manufacturer != ''">manufacturer = #{manufacturer},</if>
+            <if test="validityPeriod != null">validity_period = #{validityPeriod},</if>
+            <if test="periodUnit != null">period_unit = #{periodUnit},</if>
+            <if test="injectionTimes != null and injectionTimes != ''">injection_times = #{injectionTimes},</if>
+            <if test="intervalDays != null">interval_days = #{intervalDays},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE vaccine_id = #{vaccineId}
+    </update>
+
+    <!-- 根据主键删除疫苗信息 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM vaccine_info WHERE vaccine_id = #{vaccineId}
+    </delete>
+
+    <!-- 批量删除疫苗信息 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM vaccine_info
+        WHERE vaccine_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计疫苗数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM vaccine_info
+        <where>
+            <if test="vaccineName != null and vaccineName != ''">
+                AND vaccine_name LIKE CONCAT('%', #{vaccineName}, '%')
+            </if>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, breed_ids)
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                AND manufacturer LIKE CONCAT('%', #{manufacturer}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询疫苗列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM vaccine_info vi
+        <where>
+            <if test="vaccineName != null and vaccineName != ''">
+                AND vi.vaccine_name LIKE CONCAT('%', #{vaccineName}, '%')
+            </if>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, vi.breed_ids)
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                AND vi.manufacturer LIKE CONCAT('%', #{manufacturer}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 按品种ID查询适用疫苗（核心业务快捷查询） -->
+    <select id="selectByBreedId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM vaccine_info vi
+        WHERE FIND_IN_SET(#{breedId}, vi.breed_ids)
+        ORDER BY vi.vaccine_name ASC
+    </select>
+
+</mapper>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.DewormingMedicineInfoDao">
+
+    <!-- 基础结果映射：对应DewormingMedicineInfo实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.DewormingMedicineInfo">
+        <id property="medicineId" column="medicine_id"/>
+        <result property="medicineName" column="medicine_name"/>
+        <result property="brand" column="brand"/>
+        <result property="type" column="type"/>
+        <result property="targetParasites" column="target_parasites"/>
+        <result property="cost" column="cost"/>
+        <result property="breedIds" column="breed_ids"/>
+        <result property="validityPeriod" column="validity_period"/>
+        <result property="periodUnit" column="period_unit"/>
+        <result property="usageMethod" column="usage_method"/>
+        <result property="description" column="description"/>
+        <result property="times" column="times"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        dmi.medicine_id,
+        dmi.medicine_name,
+        dmi.brand,
+        dmi.type,
+        dmi.target_parasites,
+        dmi.cost,
+        dmi.breed_ids,
+        dmi.validity_period,
+        dmi.period_unit,
+        dmi.usage_method,
+        dmi.description,
+        dmi.times,
+        dmi.create_time,
+        dmi.update_time,
+        dmi.create_user_id,
+        dmi.update_user_id
+    </sql>
+
+    <!-- 新增驱虫药物信息 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.DewormingMedicineInfo">
+        INSERT INTO deworming_medicine_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="medicineId != null and medicineId != ''">
+                medicine_id,
+            </if>
+            <if test="medicineName != null and medicineName != ''">
+                medicine_name,
+            </if>
+            <if test="brand != null and brand != ''">
+                brand,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="targetParasites != null and targetParasites != ''">
+                target_parasites,
+            </if>
+            <if test="cost != null">
+                cost,
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                breed_ids,
+            </if>
+            <if test="validityPeriod != null">
+                validity_period,
+            </if>
+            <if test="periodUnit != null">
+                period_unit,
+            </if>
+            <if test="usageMethod != null and usageMethod != ''">
+                usage_method,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="times != null">
+                times,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="medicineId != null and medicineId != ''">
+                #{medicineId},
+            </if>
+            <if test="medicineName != null and medicineName != ''">
+                #{medicineName},
+            </if>
+            <if test="brand != null and brand != ''">
+                #{brand},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="targetParasites != null and targetParasites != ''">
+                #{targetParasites},
+            </if>
+            <if test="cost != null">
+                #{cost},
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                #{breedIds},
+            </if>
+            <if test="validityPeriod != null">
+                #{validityPeriod},
+            </if>
+            <if test="periodUnit != null">
+                #{periodUnit},
+            </if>
+            <if test="usageMethod != null and usageMethod != ''">
+                #{usageMethod},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="times != null">
+                #{times},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新驱虫药物信息 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.DewormingMedicineInfo">
+        UPDATE deworming_medicine_info
+        <set>
+            <if test="medicineName != null and medicineName != ''">medicine_name = #{medicineName},</if>
+            <if test="brand != null and brand != ''">brand = #{brand},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="targetParasites != null and targetParasites != ''">target_parasites = #{targetParasites},</if>
+            <if test="cost != null">cost = #{cost},</if>
+            <if test="breedIds != null and breedIds != ''">breed_ids = #{breedIds},</if>
+            <if test="validityPeriod != null">validity_period = #{validityPeriod},</if>
+            <if test="periodUnit != null">period_unit = #{periodUnit},</if>
+            <if test="usageMethod != null and usageMethod != ''">usage_method = #{usageMethod},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="times != null">times = #{times},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE medicine_id = #{medicineId}
+    </update>
+
+    <!-- 根据主键删除驱虫药物信息 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM deworming_medicine_info WHERE medicine_id = #{medicineId}
+    </delete>
+
+    <!-- 批量删除驱虫药物信息 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM deworming_medicine_info
+        WHERE medicine_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计驱虫药物数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM deworming_medicine_info
+        <where>
+            <if test="medicineName != null and medicineName != ''">
+                AND medicine_name LIKE CONCAT('%', #{medicineName}, '%')
+            </if>
+            <if test="type != null">
+                AND type = #{type}
+            </if>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, breed_ids)
+            </if>
+            <if test="brand != null and brand != ''">
+                AND brand LIKE CONCAT('%', #{brand}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询驱虫药物列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM deworming_medicine_info dmi
+        <where>
+            <if test="medicineName != null and medicineName != ''">
+                AND dmi.medicine_name LIKE CONCAT('%', #{medicineName}, '%')
+            </if>
+            <if test="type != null">
+                AND dmi.type = #{type}
+            </if>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, dmi.breed_ids)
+            </if>
+            <if test="brand != null and brand != ''">
+                AND dmi.brand LIKE CONCAT('%', #{brand}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 按品种ID+药物类型查询适用驱虫药 -->
+    <select id="selectByBreedIdAndType" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM deworming_medicine_info dmi
+        WHERE FIND_IN_SET(#{breedId}, dmi.breed_ids)
+        AND dmi.type = #{type}
+        ORDER BY dmi.medicine_name ASC
+    </select>
+
+</mapper>

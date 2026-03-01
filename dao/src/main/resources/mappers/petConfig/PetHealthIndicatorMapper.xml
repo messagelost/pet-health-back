@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.PetHealthIndicatorDao">
+
+    <!-- 基础结果映射：对应PetHealthIndicator实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.PetHealthIndicator">
+        <id property="indicatorId" column="indicator_id"/>
+        <result property="indicatorName" column="indicator_name"/>
+        <result property="unit" column="unit"/>
+        <result property="description" column="description"/>
+        <result property="inputType" column="input_type"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        phi.indicator_id,
+        phi.indicator_name,
+        phi.unit,
+        phi.description,
+        phi.input_type,
+        phi.create_time,
+        phi.update_time,
+        phi.create_user_id,
+        phi.update_user_id
+    </sql>
+
+    <!-- 新增健康指标 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetHealthIndicator">
+        INSERT INTO pet_health_indicator
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="indicatorId != null and indicatorId != ''">
+                indicator_id,
+            </if>
+            <if test="indicatorName != null and indicatorName != ''">
+                indicator_name,
+            </if>
+            <if test="unit != null and unit != ''">
+                unit,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="inputType != null and inputType != ''">
+                input_type,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="indicatorId != null and indicatorId != ''">
+                #{indicatorId},
+            </if>
+            <if test="indicatorName != null and indicatorName != ''">
+                #{indicatorName},
+            </if>
+            <if test="unit != null and unit != ''">
+                #{unit},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="inputType != null and inputType != ''">
+                #{inputType},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新健康指标 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetHealthIndicator">
+        UPDATE pet_health_indicator
+        <set>
+            <if test="indicatorName != null and indicatorName != ''">indicator_name = #{indicatorName},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="inputType != null and inputType != ''">input_type = #{inputType},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE indicator_id = #{indicatorId}
+    </update>
+
+    <!-- 根据主键删除指标 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_health_indicator WHERE indicator_id = #{indicatorId}
+    </delete>
+
+    <!-- 批量删除指标 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_health_indicator
+        WHERE indicator_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计指标数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_health_indicator
+        <where>
+            <if test="indicatorName != null and indicatorName != ''">
+                AND indicator_name LIKE CONCAT('%', #{indicatorName}, '%')
+            </if>
+            <if test="inputType != null and inputType != ''">
+                AND input_type = #{inputType}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询指标列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_health_indicator phi
+        <where>
+            <if test="indicatorName != null and indicatorName != ''">
+                AND phi.indicator_name LIKE CONCAT('%', #{indicatorName}, '%')
+            </if>
+            <if test="inputType != null and inputType != ''">
+                AND phi.input_type = #{inputType}
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 根据输入类型查询指标列表（常用快捷查询） -->
+    <select id="selectByInputType" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_health_indicator phi
+        WHERE phi.input_type = #{inputType}
+        ORDER BY phi.indicator_name ASC
+    </select>
+
+</mapper>

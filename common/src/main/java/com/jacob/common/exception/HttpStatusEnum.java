@@ -13,7 +13,9 @@ public enum HttpStatusEnum {
 
     REQUEST_ERROR(400, "请求错误"),
 
-    FORBIDDEN(403, "禁止访问"),
+    UNAUTHORIZED(401, "无效或未登录"),
+
+    FORBIDDEN(403, "无权限访问"),
 
     NOT_FOUND(404, "资源未找到"),
 

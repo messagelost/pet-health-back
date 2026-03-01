@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.PetLifeStageDao">
+
+    <!-- 基础结果映射：对应PetLifeStage实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.PetLifeStage">
+        <id property="stageId" column="stage_id"/>
+        <result property="speciesId" column="species_id"/>
+        <result property="stageName" column="stage_name"/>
+        <result property="minAgeMonth" column="min_age_month"/>
+        <result property="maxAgeMonth" column="max_age_month"/>
+        <result property="description" column="description"/>
+        <result property="sort" column="sort"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 包含种类名称的结果映射（联表查询用） -->
+    <resultMap id="StageWithSpeciesResultMap" type="com.jacob.common.model.petConfig.entity.PetLifeStage" extends="BaseResultMap">
+        <result property="speciesName" column="species_name"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pls.stage_id,
+        pls.species_id,
+        pls.stage_name,
+        pls.min_age_month,
+        pls.max_age_month,
+        pls.description,
+        pls.sort,
+        pls.create_time,
+        pls.update_time,
+        pls.create_user_id,
+        pls.update_user_id
+    </sql>
+
+    <!-- 新增生命周期阶段 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetLifeStage">
+        INSERT INTO pet_life_stage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stageId != null and stageId != ''">
+                stage_id,
+            </if>
+            <if test="speciesId != null and speciesId != ''">
+                species_id,
+            </if>
+            <if test="stageName != null and stageName != ''">
+                stage_name,
+            </if>
+            <if test="minAgeMonth != null">
+                min_age_month,
+            </if>
+            <if test="maxAgeMonth != null">
+                max_age_month,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="stageId != null and stageId != ''">
+                #{stageId},
+            </if>
+            <if test="speciesId != null and speciesId != ''">
+                #{speciesId},
+            </if>
+            <if test="stageName != null and stageName != ''">
+                #{stageName},
+            </if>
+            <if test="minAgeMonth != null">
+                #{minAgeMonth},
+            </if>
+            <if test="maxAgeMonth != null">
+                #{maxAgeMonth},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="sort != null">
+                #{sort},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新生命周期阶段 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetLifeStage">
+        UPDATE pet_life_stage
+        <set>
+            <if test="speciesId != null and speciesId != ''">species_id = #{speciesId},</if>
+            <if test="stageName != null and stageName != ''">stage_name = #{stageName},</if>
+            <if test="minAgeMonth != null">min_age_month = #{minAgeMonth},</if>
+            <if test="maxAgeMonth != null">max_age_month = #{maxAgeMonth},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE stage_id = #{stageId}
+    </update>
+
+    <!-- 根据主键删除生命周期阶段 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_life_stage WHERE stage_id = #{stageId}
+    </delete>
+
+    <!-- 批量删除生命周期阶段 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_life_stage
+        WHERE stage_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计生命周期阶段数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_life_stage
+        <where>
+            <if test="speciesId != null and speciesId != ''">
+                AND species_id = #{speciesId}
+            </if>
+            <if test="stageName != null and stageName != ''">
+                AND stage_name LIKE CONCAT('%', #{stageName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询生命周期阶段列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_life_stage pls
+        <where>
+            <if test="speciesId != null and speciesId != ''">
+                AND pls.species_id = #{speciesId}
+            </if>
+            <if test="stageName != null and stageName != ''">
+                AND pls.stage_name LIKE CONCAT('%', #{stageName}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+        <!-- 默认按sort升序+min_age_month升序 -->
+        <if test="custom_order_by == null or custom_order_by == ''">
+            ORDER BY pls.sort ASC, pls.min_age_month ASC
+        </if>
+    </select>
+
+    <!-- 按种类ID+月龄匹配生命周期阶段（核心业务快捷查询） -->
+    <select id="selectBySpeciesAndAge" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_life_stage pls
+        WHERE pls.species_id = #{speciesId}
+        AND (pls.min_age_month &lt;= #{ageMonth})
+        AND (pls.max_age_month = -1 OR pls.max_age_month &gt;= #{ageMonth})
+        ORDER BY pls.sort ASC
+        LIMIT 1
+    </select>
+
+    <!-- 查询生命周期阶段列表（含种类名称） -->
+    <select id="selectListWithSpecies" resultMap="StageWithSpeciesResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        ps.species_name
+        FROM pet_life_stage pls
+        LEFT JOIN pet_species ps ON pls.species_id = ps.species_id
+        <where>
+            <if test="speciesId != null and speciesId != ''">
+                AND pls.species_id = #{speciesId}
+            </if>
+            <if test="stageName != null and stageName != ''">
+                AND pls.stage_name LIKE CONCAT('%', #{stageName}, '%')
+            </if>
+        </where>
+        ORDER BY pls.sort ASC, pls.min_age_month ASC
+    </select>
+
+</mapper>

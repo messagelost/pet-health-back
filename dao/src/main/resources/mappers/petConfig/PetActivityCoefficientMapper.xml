@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.PetActivityCoefficientDao">
+
+    <!-- 基础结果映射：对应PetActivityCoefficient实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.PetActivityCoefficient">
+        <id property="coefficientId" column="coefficient_id"/>
+        <result property="breedIds" column="breed_ids"/>
+        <result property="calculatePriority" column="calculate_priority"/>
+        <result property="value" column="value"/>
+        <result property="caseDesc" column="case"/> <!-- 映射关键字字段case到caseDesc -->
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pac.coefficient_id,
+        pac.breed_ids,
+        pac.calculate_priority,
+        pac.value,
+        pac.case,
+        pac.create_time,
+        pac.update_time,
+        pac.create_user_id,
+        pac.update_user_id
+    </sql>
+
+    <!-- 新增活动系数参考 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetActivityCoefficient">
+        INSERT INTO pet_activity_coefficient
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coefficientId != null and coefficientId != ''">
+                coefficient_id,
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                breed_ids,
+            </if>
+            <if test="calculatePriority != null">
+                calculate_priority,
+            </if>
+            <if test="value != null">
+                value,
+            </if>
+            <if test="caseDesc != null and caseDesc != ''">
+                `case`, <!-- 关键字字段加反引号转义 -->
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coefficientId != null and coefficientId != ''">
+                #{coefficientId},
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                #{breedIds},
+            </if>
+            <if test="calculatePriority != null">
+                #{calculatePriority},
+            </if>
+            <if test="value != null">
+                #{value},
+            </if>
+            <if test="caseDesc != null and caseDesc != ''">
+                #{caseDesc},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新活动系数参考 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetActivityCoefficient">
+        UPDATE pet_activity_coefficient
+        <set>
+            <if test="breedIds != null and breedIds != ''">breed_ids = #{breedIds},</if>
+            <if test="calculatePriority != null">calculate_priority = #{calculatePriority},</if>
+            <if test="value != null">value = #{value},</if>
+            <if test="caseDesc != null and caseDesc != ''">`case` = #{caseDesc},</if> <!-- 关键字字段加反引号转义 -->
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE coefficient_id = #{coefficientId}
+    </update>
+
+    <!-- 根据主键删除活动系数参考 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_activity_coefficient WHERE coefficient_id = #{coefficientId}
+    </delete>
+
+    <!-- 批量删除活动系数参考 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_activity_coefficient
+        WHERE coefficient_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计活动系数参考数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_activity_coefficient
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, breed_ids)
+            </if>
+            <if test="caseDesc != null and caseDesc != ''">
+                AND `case` LIKE CONCAT('%', #{caseDesc}, '%') <!-- 关键字字段加反引号转义 -->
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询活动系数参考列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_activity_coefficient pac
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, pac.breed_ids)
+            </if>
+            <if test="caseDesc != null and caseDesc != ''">
+                AND pac.`case` LIKE CONCAT('%', #{caseDesc}, '%') <!-- 关键字字段加反引号转义 -->
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+        <!-- 默认按优先级升序（数值越小优先级越高） -->
+        <if test="custom_order_by == null or custom_order_by == ''">
+            ORDER BY pac.calculate_priority ASC
+        </if>
+    </select>
+
+    <!-- 按品种ID查询适用活动系数（核心业务快捷查询） -->
+    <select id="selectByBreedId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_activity_coefficient pac
+        WHERE FIND_IN_SET(#{breedId}, pac.breed_ids)
+        ORDER BY pac.calculate_priority ASC
+    </select>
+
+</mapper>

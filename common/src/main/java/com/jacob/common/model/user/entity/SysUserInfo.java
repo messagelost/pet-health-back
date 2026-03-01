@@ -88,4 +88,16 @@ public class SysUserInfo extends BaseEntity {
     @TableField
     private String lastLoginIp;
 
+    /**
+     * 登录用户名
+     */
+    @TableField(exist = false)
+    private String account;
+
+    /**
+     * 新用户名
+     */
+    @TableField(exist = false)
+    private String newAccount;
+
 }

@@ -2,6 +2,8 @@ package com.jacob.common.exception;
 
 import com.jacob.common.model.base.ResponseVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthenticatedException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.validation.BindException;
@@ -59,7 +61,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理NullPointerException异常
+     * 处理空指针异常
      *
      * @param e
      * @return
@@ -68,6 +70,29 @@ public class GlobalExceptionHandler {
     public ResponseVO<?> customExceptionHandler(NullPointerException e) {
         log.error("NullPointerException异常：", e);
         return ResponseVO.error("空指针异常");
+    }
+
+    /**
+     * 处理UnauthenticatedException异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler({UnauthenticatedException.class})
+    public ResponseVO<?> unauthenticatedExceptionHandler(UnauthenticatedException e) {
+        log.error("UnauthenticatedException异常：", e);
+        ResponseVO<String> r = new ResponseVO<>();
+        r.setCode(HttpStatusEnum.UNAUTHORIZED.getCode());
+        r.setMessage(HttpStatusEnum.UNAUTHORIZED.getMsg());
+        return r;
+    }
+
+    @ExceptionHandler({UnauthorizedException.class})
+    public ResponseVO<?> unauthorizedExceptionHandler(UnauthorizedException e) {
+        log.error("UnauthorizedException异常：", e);
+        ResponseVO<String> r = new ResponseVO<>();
+        r.setCode(HttpStatusEnum.FORBIDDEN.getCode());
+        r.setMessage(HttpStatusEnum.FORBIDDEN.getMsg());
+        return r;
     }
 
 

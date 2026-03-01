@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.GroomingTypeInfoDao">
+
+    <!-- 基础结果映射：对应GroomingTypeInfo实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.GroomingTypeInfo">
+        <id property="typeId" column="type_id"/>
+        <result property="groomingType" column="grooming_type"/>
+        <result property="breedIds" column="breed_ids"/>
+        <result property="description" column="description"/>
+        <result property="cycleDays" column="cycle_days"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        gti.type_id,
+        gti.grooming_type,
+        gti.breed_ids,
+        gti.description,
+        gti.cycle_days,
+        gti.create_time,
+        gti.update_time,
+        gti.create_user_id,
+        gti.update_user_id
+    </sql>
+
+    <!-- 新增洗护类型 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.GroomingTypeInfo">
+        INSERT INTO grooming_type_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeId != null and typeId != ''">
+                type_id,
+            </if>
+            <if test="groomingType != null and groomingType != ''">
+                grooming_type,
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                breed_ids,
+            </if>
+            <if test="description != null and description != ''">
+                description,
+            </if>
+            <if test="cycleDays != null">
+                cycle_days,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeId != null and typeId != ''">
+                #{typeId},
+            </if>
+            <if test="groomingType != null and groomingType != ''">
+                #{groomingType},
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                #{breedIds},
+            </if>
+            <if test="description != null and description != ''">
+                #{description},
+            </if>
+            <if test="cycleDays != null">
+                #{cycleDays},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新洗护类型 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.GroomingTypeInfo">
+        UPDATE grooming_type_info
+        <set>
+            <if test="groomingType != null and groomingType != ''">grooming_type = #{groomingType},</if>
+            <if test="breedIds != null and breedIds != ''">breed_ids = #{breedIds},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+            <if test="cycleDays != null">cycle_days = #{cycleDays},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE type_id = #{typeId}
+    </update>
+
+    <!-- 根据主键删除洗护类型 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM grooming_type_info WHERE type_id = #{typeId}
+    </delete>
+
+    <!-- 批量删除洗护类型 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM grooming_type_info
+        WHERE type_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计洗护类型数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM grooming_type_info
+        <where>
+            <if test="groomingType != null and groomingType != ''">
+                AND grooming_type LIKE CONCAT('%', #{groomingType}, '%')
+            </if>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, breed_ids)
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询洗护类型列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM grooming_type_info gti
+        <where>
+            <if test="groomingType != null and groomingType != ''">
+                AND gti.grooming_type LIKE CONCAT('%', #{groomingType}, '%')
+            </if>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, gti.breed_ids)
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 按品种ID查询适用洗护类型（核心业务快捷查询） -->
+    <select id="selectByBreedId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM grooming_type_info gti
+        WHERE FIND_IN_SET(#{breedId}, gti.breed_ids)
+        ORDER BY gti.cycle_days ASC
+    </select>
+
+</mapper>

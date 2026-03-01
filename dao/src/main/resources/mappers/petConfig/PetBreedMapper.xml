@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.PetBreedDao">
+
+    <!-- 基础结果映射：对应PetBreed实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.PetBreed">
+        <id property="breedId" column="breed_id"/>
+        <result property="speciesId" column="species_id"/>
+        <result property="breedName" column="breed_name"/>
+        <result property="description" column="description"/>
+        <result property="speciesName" column="species_name"/>
+        <result property="imageUrl" column="image_url"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pb.breed_id,
+        pb.species_id,
+        pb.breed_name,
+        pb.description,
+        pb.species_name,
+        pb.image_url,
+        pb.create_time,
+        pb.update_time,
+        pb.create_user_id,
+        pb.update_user_id
+    </sql>
+
+    <!-- 新增宠物品种 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetBreed">
+        INSERT INTO pet_breed
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="breedId != null and breedId != ''">
+                breed_id,
+            </if>
+            <if test="speciesId != null and speciesId != ''">
+                species_id,
+            </if>
+            <if test="breedName != null and breedName != ''">
+                breed_name,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="speciesName != null and speciesName != ''">
+                species_name,
+            </if>
+            <if test="imageUrl != null and imageUrl != ''">
+                image_url,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="breedId != null and breedId != ''">
+                #{breedId},
+            </if>
+            <if test="speciesId != null and speciesId != ''">
+                #{speciesId},
+            </if>
+            <if test="breedName != null and breedName != ''">
+                #{breedName},
+            </if>
+            <if test="description != null">
+                #{description},
+            </if>
+            <if test="speciesName != null and speciesName != ''">
+                #{speciesName},
+            </if>
+            <if test="imageUrl != null and imageUrl != ''">
+                #{imageUrl},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新宠物品种 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetBreed">
+        UPDATE pet_breed
+        <set>
+            <if test="speciesId != null and speciesId != ''">species_id = #{speciesId},</if>
+            <if test="breedName != null and breedName != ''">breed_name = #{breedName},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="speciesName != null and speciesName != ''">species_name = #{speciesName},</if>
+            <if test="imageUrl != null and imageUrl != ''">image_url = #{imageUrl},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE breed_id = #{breedId}
+    </update>
+
+    <!-- 根据主键删除品种 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_breed WHERE breed_id = #{breedId}
+    </delete>
+
+    <!-- 批量删除品种 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_breed
+        WHERE breed_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计品种数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_breed
+        <where>
+            <if test="speciesId != null and speciesId != ''">
+                AND species_id = #{speciesId}
+            </if>
+            <if test="breedName != null and breedName != ''">
+                AND breed_name LIKE CONCAT('%', #{breedName}, '%')
+            </if>
+            <if test="speciesName != null and speciesName != ''">
+                AND species_name LIKE CONCAT('%', #{speciesName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询品种列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_breed pb
+        <where>
+            <if test="speciesId != null and speciesId != ''">
+                AND pb.species_id = #{speciesId}
+            </if>
+            <if test="breedName != null and breedName != ''">
+                AND pb.breed_name LIKE CONCAT('%', #{breedName}, '%')
+            </if>
+            <if test="speciesName != null and speciesName != ''">
+                AND pb.species_name LIKE CONCAT('%', #{speciesName}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 根据种类ID查询品种列表（常用快捷查询） -->
+    <select id="selectBySpeciesId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_breed pb
+        WHERE pb.species_id = #{speciesId}
+        ORDER BY pb.breed_name ASC
+    </select>
+
+</mapper>

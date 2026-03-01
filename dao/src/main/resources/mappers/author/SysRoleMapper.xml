@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.author.SysRoleDao">
+
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.author.entity.SysRole">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleStr" column="role_str"/>
+        <result property="roleSort" column="role_sort"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        r.role_id,
+        r.role_name,
+        r.role_str,
+        r.role_sort,
+        r.create_time,
+        r.update_time,
+        r.create_user_id,
+        r.update_user_id
+    </sql>
+
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.author.entity.SysRole">
+        INSERT
+        INTO sys_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null and roleId != ''">
+                role_id,
+            </if>
+            <if test="roleName != null and roleName != ''">
+                role_name,
+            </if>
+            <if test="roleStr != null and roleStr != ''">
+                role_str,
+            </if>
+            <if test="roleSort != null">
+                role_sort,
+            </if>
+            create_time,
+            update_time
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null and roleId != ''">
+                #{roleId},
+            </if>
+            <if test="roleName != null and roleName != ''">
+                #{roleName},
+            </if>
+            <if test="roleStr != null and roleStr != ''">
+                #{roleStr},
+            </if>
+            <if test="roleSort != null">
+                #{roleSort},
+            </if>
+            NOW(),
+            NOW()
+        </trim>
+    </insert>
+
+    <update id="updateWithBean" parameterType="com.jacob.common.model.author.entity.SysRole">
+        UPDATE sys_role
+        <set>
+            <if test="roleName != null and roleName != ''">role_name = #{roleName},</if>
+            <if test="roleStr != null and roleStr != ''">role_str = #{roleStr},</if>
+            <if test="roleSort != null">role_sort = #{roleSort},</if>
+            update_time = NOW()
+        </set>
+        WHERE role_id = #{roleId}
+    </update>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM sys_role WHERE role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM sys_role
+        WHERE role_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM sys_role
+        <where>
+            <if test="roleName != null and roleName != ''">
+                AND role_name LIKE CONCAT('%', #{roleName}, '%')
+            </if>
+            <if test="roleStr != null and roleStr != ''">
+                AND role_str LIKE CONCAT('%', #{roleStr}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_role r
+        <where>
+            <if test="roleName != null and roleName != ''">
+                AND role_name LIKE CONCAT('%', #{roleName}, '%')
+            </if>
+            <if test="roleStr != null and roleStr != ''">
+                AND role_str LIKE CONCAT('%', #{roleStr}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+</mapper>

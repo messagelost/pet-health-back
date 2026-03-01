@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.author.SysMenuDao">
+
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.author.entity.SysMenu">
+        <id property="menuId" column="menu_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="title" column="title"/>
+        <result property="menuType" column="menu_type"/>
+        <result property="path" column="path"/>
+        <result property="activeMenu" column="active_menu"/>
+        <result property="redirect" column="redirect"/>
+        <result property="component" column="component"/>
+        <result property="authorStr" column="author_str"/>
+        <result property="icon" column="icon"/>
+        <result property="order" column="order"/>
+        <result property="visible" column="visible"/>
+        <result property="status" column="status"/>
+
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+
+        <result property="hasChildren" column="has_children"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        m.menu_id,
+        m.parent_id,
+        m.`name`,
+        m.title,
+        m.menu_type,
+        m.`path`,
+        m.active_menu,
+        m.redirect,
+        m.component,
+        m.author_str,
+        m.icon,
+        m.`order`,
+        m.visible,
+        m.status,
+        m.create_time,
+        m.update_time,
+        m.create_user_id,
+        m.update_user_id
+    </sql>
+
+    <select id="selectAllMenu" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_menu m
+        WHERE status = 1
+        ORDER BY `order` ASC
+    </select>
+
+    <select id="selectByParentId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_menu m
+        WHERE parent_id = #{parentId}
+        AND status = 1
+        ORDER BY `order` ASC
+    </select>
+
+    <select id="selectMenuByUserId" resultMap="BaseResultMap">
+        SELECT DISTINCT
+        <include refid="Base_Column_List"/>
+        FROM sys_menu m
+        LEFT JOIN sys_menu_role mr ON m.menu_id = mr.menu_id
+        LEFT JOIN sys_user_role ur ON mr.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+        AND m.status = 1
+        ORDER BY m.order ASC
+    </select>
+
+    <select id="selectMenuByRoleId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_menu m
+        INNER JOIN sys_menu_role mr ON m.menu_id = mr.menu_id
+        WHERE mr.role_id = #{roleId}
+        ORDER BY m.order ASC
+    </select>
+
+    <select id="selectPemrsByUserId" resultType="java.lang.String">
+        SELECT DISTINCT author_str
+        FROM sys_menu m
+        LEFT JOIN sys_menu_role mr ON m.menu_id = mr.menu_id
+        LEFT JOIN sys_user_role ur ON mr.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+          AND m.menu_type = 3
+          AND m.status = 1
+    </select>
+
+    <!-- 新增菜单 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.author.entity.SysMenu">
+        INSERT
+        INTO sys_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuId != null and menuId != ''">
+                menu_id,
+            </if>
+            <if test="parentId != null and parentId != ''">
+                parent_id,
+            </if>
+            <if test="name != null and name != ''">
+                `name`,
+            </if>
+            <if test="title != null and title != ''">
+                title,
+            </if>
+            <if test="menuType != null and menuType != ''">
+                menu_type,
+            </if>
+            <if test="path != null and path != ''">
+                `path`,
+            </if>
+            <if test="activeMenu != null and activeMenu != ''">
+                active_menu,
+            </if>
+            <if test="redirect != null and redirect != ''">
+                redirect,
+            </if>
+            <if test="component != null and component != ''">
+                component,
+            </if>
+            <if test="authorStr != null and authorStr != ''">
+                author_str,
+            </if>
+            <if test="icon != null and icon != ''">
+                icon,
+            </if>
+            <if test="order != null">
+                `order`,
+            </if>
+            <if test="visible != null">
+                visible,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            create_time,
+            update_time
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="menuId != null and menuId != ''">
+                #{menuId},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                #{parentId},
+            </if>
+            <if test="name != null and name != ''">
+                #{name},
+            </if>
+            <if test="title != null and title != ''">
+                #{title},
+            </if>
+            <if test="menuType != null and menuType != ''">
+                #{menuType},
+            </if>
+            <if test="path != null and path != ''">
+                #{path},
+            </if>
+            <if test="activeMenu != null and activeMenu != ''">
+                #{activeMenu},
+            </if>
+            <if test="redirect != null and redirect != ''">
+                #{redirect},
+            </if>
+            <if test="component != null and component != ''">
+                #{component},
+            </if>
+            <if test="authorStr != null and authorStr != ''">
+                #{authorStr},
+            </if>
+            <if test="icon != null and icon != ''">
+                #{icon},
+            </if>
+            <if test="order != null">
+                #{order},
+            </if>
+            <if test="visible != null">
+                #{visible},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            NOW(),
+            NOW()
+        </trim>
+    </insert>
+
+    <!-- 更新菜单 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.author.entity.SysMenu">
+        UPDATE sys_menu
+        <set>
+            <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
+            <if test="name != null and name != ''">`name` = #{name},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="menuType != null and menuType != ''">menu_type = #{menuType},</if>
+            <if test="path != null and path != ''">`path` = #{path},</if>
+            <if test="activeMenu != null and activeMenu != ''">active_menu = #{activeMenu},</if>
+            <if test="redirect != null and redirect != ''">redirect = #{redirect},</if>
+            <if test="component != null and component != ''">component = #{component},</if>
+            <if test="authorStr != null and authorStr != ''">author_str = #{authorStr},</if>
+            <if test="icon != null and icon != ''">icon = #{icon},</if>
+            <if test="order != null">`order` = #{order},</if>
+            <if test="visible != null">visible = #{visible},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW()
+        </set>
+        WHERE menu_id = #{menuId}
+    </update>
+
+    <!-- 根据主键删除 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM sys_menu WHERE menu_id = #{menuId}
+    </delete>
+
+    <!-- 批量删除 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM sys_menu
+        WHERE menu_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 根据ID查询 -->
+    <select id="selectOneById" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM sys_menu m
+        WHERE menu_id = #{menuId}
+    </select>
+
+    <!-- 统计数量 -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM sys_menu
+        <where>
+            <if test="name != null and name != ''">
+                AND `name` LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="menuType != null">
+                AND menu_type = #{menuType}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="visible != null">
+                AND visible = #{visible}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询菜单列表 -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        CASE WHEN (SELECT COUNT(1) FROM sys_menu WHERE parent_id = m.menu_id) > 0 THEN 'true' ELSE 'false' END AS has_children
+        FROM sys_menu m
+        <where>
+            <if test="name != null and name != ''">
+                AND `name` LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="menuType != null">
+                AND menu_type = #{menuType}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="visible != null">
+                AND visible = #{visible}
+            </if>
+            <if test="parentId != null">
+                AND parent_id = #{parentId}
+            </if>
+            <if test="catalogType != null">
+                AND menu_type &lt; #{catalogType}
+            </if>
+        </where>
+        ORDER BY `order` ASC
+    </select>
+
+
+</mapper>

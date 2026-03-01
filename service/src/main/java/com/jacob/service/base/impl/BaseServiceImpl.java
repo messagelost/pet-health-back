@@ -56,7 +56,8 @@ public abstract class BaseServiceImpl<M extends BaseMapper<T>, T> extends Servic
     public PageResult<T> selectPageList(Map<String, Object> params) {
         //分页处理
         PageHelper.startPage(params);
-        PageInfo<T> page = (PageInfo<T>) getDao().selectAllList(params);
+        List<T> list = getDao().selectAllList(params);
+        PageInfo<T> page = new PageInfo<T>(list);
         return new PageResult<T>(page);
     }
 

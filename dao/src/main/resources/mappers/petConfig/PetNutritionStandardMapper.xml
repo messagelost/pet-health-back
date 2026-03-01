@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.PetNutritionStandardDao">
+
+    <!-- 基础结果映射：对应PetNutritionStandard实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.PetNutritionStandard">
+        <id property="standardId" column="standard_id"/>
+        <result property="breedIds" column="breed_ids"/>
+        <result property="lifeStage" column="life_stage"/>
+        <result property="configId" column="config_id"/>
+        <result property="upperLimit" column="upper_limit"/>
+        <result property="lowerLimit" column="lower_limit"/>
+        <result property="recommend" column="recommend"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pns.standard_id,
+        pns.breed_ids,
+        pns.life_stage,
+        pns.config_id,
+        pns.upper_limit,
+        pns.lower_limit,
+        pns.recommend,
+        pns.create_time,
+        pns.update_time,
+        pns.create_user_id,
+        pns.update_user_id
+    </sql>
+
+    <!-- 新增营养标准参考 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetNutritionStandard">
+        INSERT INTO pet_nutrition_standard
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="standardId != null and standardId != ''">
+                standard_id,
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                breed_ids,
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                life_stage,
+            </if>
+            <if test="configId != null and configId != ''">
+                config_id,
+            </if>
+            <if test="upperLimit != null">
+                upper_limit,
+            </if>
+            <if test="lowerLimit != null">
+                lower_limit,
+            </if>
+            <if test="recommend != null">
+                recommend,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="standardId != null and standardId != ''">
+                #{standardId},
+            </if>
+            <if test="breedIds != null and breedIds != ''">
+                #{breedIds},
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                #{lifeStage},
+            </if>
+            <if test="configId != null and configId != ''">
+                #{configId},
+            </if>
+            <if test="upperLimit != null">
+                #{upperLimit},
+            </if>
+            <if test="lowerLimit != null">
+                #{lowerLimit},
+            </if>
+            <if test="recommend != null">
+                #{recommend},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新营养标准参考 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetNutritionStandard">
+        UPDATE pet_nutrition_standard
+        <set>
+            <if test="breedIds != null and breedIds != ''">breed_ids = #{breedIds},</if>
+            <if test="lifeStage != null and lifeStage != ''">life_stage = #{lifeStage},</if>
+            <if test="configId != null and configId != ''">config_id = #{configId},</if>
+            <if test="upperLimit != null">upper_limit = #{upperLimit},</if>
+            <if test="lowerLimit != null">lower_limit = #{lowerLimit},</if>
+            <if test="recommend != null">recommend = #{recommend},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE standard_id = #{standardId}
+    </update>
+
+    <!-- 根据主键删除营养标准参考 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_nutrition_standard WHERE standard_id = #{standardId}
+    </delete>
+
+    <!-- 批量删除营养标准参考 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_nutrition_standard
+        WHERE standard_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计营养标准参考数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_nutrition_standard
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, breed_ids)
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                AND life_stage = #{lifeStage}
+            </if>
+            <if test="configId != null and configId != ''">
+                AND config_id = #{configId}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询营养标准参考列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_nutrition_standard pns
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND FIND_IN_SET(#{breedId}, pns.breed_ids)
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                AND pns.life_stage = #{lifeStage}
+            </if>
+            <if test="configId != null and configId != ''">
+                AND pns.config_id = #{configId}
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 按品种+生命周期+营养成分查询标准（核心业务快捷查询） -->
+    <select id="selectByBreedLifeConfig" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_nutrition_standard pns
+        WHERE FIND_IN_SET(#{breedId}, pns.breed_ids)
+        AND pns.life_stage = #{lifeStage}
+        AND pns.config_id = #{configId}
+        LIMIT 1
+    </select>
+
+</mapper>

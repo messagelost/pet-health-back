@@ -8,10 +8,6 @@ import java.io.Serializable;
 
 @Data
 public class ResponseVO<T> {
-    /**
-     * 状态
-     */
-    private String status;
 
     /**
      * 状态码

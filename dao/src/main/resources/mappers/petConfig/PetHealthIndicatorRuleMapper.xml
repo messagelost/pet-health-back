@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petConfig.PetHealthIndicatorRuleDao">
+
+    <!-- 基础结果映射：对应PetHealthIndicatorRule实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petConfig.entity.PetHealthIndicatorRule">
+        <id property="ruleId" column="rule_id"/>
+        <result property="breedId" column="breed_id"/>
+        <result property="indicatorId" column="indicator_id"/>
+        <result property="indicatorName" column="indicator_name"/>
+        <result property="lifeStage" column="life_stage"/>
+        <result property="minValue" column="min_value"/>
+        <result property="maxValue" column="max_value"/>
+        <result property="unit" column="unit"/>
+        <result property="belowRemark" column="below_remark"/>
+        <result property="aboveRemark" column="above_remark"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        phir.rule_id,
+        phir.breed_id,
+        phir.indicator_id,
+        phir.indicator_name,
+        phir.life_stage,
+        phir.min_value,
+        phir.max_value,
+        phir.unit,
+        phir.below_remark,
+        phir.above_remark,
+        phir.create_time,
+        phir.update_time,
+        phir.create_user_id,
+        phir.update_user_id
+    </sql>
+
+    <!-- 新增指标适用规则 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetHealthIndicatorRule">
+        INSERT INTO pet_health_indicator_rule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ruleId != null and ruleId != ''">
+                rule_id,
+            </if>
+            <if test="breedId != null and breedId != ''">
+                breed_id,
+            </if>
+            <if test="indicatorId != null and indicatorId != ''">
+                indicator_id,
+            </if>
+            <if test="indicatorName != null and indicatorName != ''">
+                indicator_name,
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                life_stage,
+            </if>
+            <if test="minValue != null">
+                min_value,
+            </if>
+            <if test="maxValue != null">
+                max_value,
+            </if>
+            <if test="unit != null and unit != ''">
+                unit,
+            </if>
+            <if test="belowRemark != null">
+                below_remark,
+            </if>
+            <if test="aboveRemark != null">
+                above_remark,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ruleId != null and ruleId != ''">
+                #{ruleId},
+            </if>
+            <if test="breedId != null and breedId != ''">
+                #{breedId},
+            </if>
+            <if test="indicatorId != null and indicatorId != ''">
+                #{indicatorId},
+            </if>
+            <if test="indicatorName != null and indicatorName != ''">
+                #{indicatorName},
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                #{lifeStage},
+            </if>
+            <if test="minValue != null">
+                #{minValue},
+            </if>
+            <if test="maxValue != null">
+                #{maxValue},
+            </if>
+            <if test="unit != null and unit != ''">
+                #{unit},
+            </if>
+            <if test="belowRemark != null">
+                #{belowRemark},
+            </if>
+            <if test="aboveRemark != null">
+                #{aboveRemark},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新指标适用规则 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petConfig.entity.PetHealthIndicatorRule">
+        UPDATE pet_health_indicator_rule
+        <set>
+            <if test="breedId != null and breedId != ''">breed_id = #{breedId},</if>
+            <if test="indicatorId != null and indicatorId != ''">indicator_id = #{indicatorId},</if>
+            <if test="indicatorName != null and indicatorName != ''">indicator_name = #{indicatorName},</if>
+            <if test="lifeStage != null and lifeStage != ''">life_stage = #{lifeStage},</if>
+            <if test="minValue != null">min_value = #{minValue},</if>
+            <if test="maxValue != null">max_value = #{maxValue},</if>
+            <if test="unit != null and unit != ''">unit = #{unit},</if>
+            <if test="belowRemark != null">below_remark = #{belowRemark},</if>
+            <if test="aboveRemark != null">above_remark = #{aboveRemark},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE rule_id = #{ruleId}
+    </update>
+
+    <!-- 根据主键删除规则 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_health_indicator_rule WHERE rule_id = #{ruleId}
+    </delete>
+
+    <!-- 批量删除规则 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_health_indicator_rule
+        WHERE rule_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计规则数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_health_indicator_rule
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND breed_id = #{breedId}
+            </if>
+            <if test="indicatorId != null and indicatorId != ''">
+                AND indicator_id = #{indicatorId}
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                AND life_stage = #{lifeStage}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询规则列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_health_indicator_rule phir
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND phir.breed_id = #{breedId}
+            </if>
+            <if test="indicatorId != null and indicatorId != ''">
+                AND phir.indicator_id = #{indicatorId}
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                AND phir.life_stage = #{lifeStage}
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 按品种+指标+生命周期查询规则（核心业务快捷查询） -->
+    <select id="selectByBreedIndicatorLifeStage" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_health_indicator_rule phir
+        WHERE phir.breed_id = #{breedId}
+        AND phir.indicator_id = #{indicatorId}
+        AND phir.life_stage = #{lifeStage}
+        LIMIT 1
+    </select>
+
+</mapper>
