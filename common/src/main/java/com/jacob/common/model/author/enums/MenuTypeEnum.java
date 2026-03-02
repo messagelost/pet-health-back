@@ -3,7 +3,7 @@ package com.jacob.common.model.author.enums;
 import lombok.Getter;
 
 @Getter
-public enum MenuType {
+public enum MenuTypeEnum {
 
     CATALOG(1, "目录"),
     MENU(2, "菜单"),
@@ -12,7 +12,7 @@ public enum MenuType {
     private final Integer code;
     private final String desc;
 
-    MenuType(Integer code, String desc) {
+    MenuTypeEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -20,8 +20,8 @@ public enum MenuType {
     /**
      * 根据code获取枚举
      */
-    public static MenuType getByCode(Integer code) {
-        for (MenuType type : values()) {
+    public static MenuTypeEnum getByCode(Integer code) {
+        for (MenuTypeEnum type : values()) {
             if (type.getCode().equals(code)) {
                 return type;
             }

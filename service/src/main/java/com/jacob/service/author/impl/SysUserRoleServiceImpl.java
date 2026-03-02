@@ -16,6 +16,7 @@ import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -66,10 +67,8 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRoleDao, SysU
 
     @Override
     public void clearCache() {
-        String redisRoleKey = RedisConstant.USER_ROLES.getCode();
-        String redisMenuKey = RedisConstant.USER_MENUS.getCode();
-        redisUtils.del(redisRoleKey);
-        redisUtils.del(redisMenuKey);
+        String[] redisKey = new String[]{RedisConstant.USER_ROLES.getCode()+"*",RedisConstant.USER_MENUS.getCode()+"*"};
+        redisUtils.delByPattern(redisKey);
     }
 
 }

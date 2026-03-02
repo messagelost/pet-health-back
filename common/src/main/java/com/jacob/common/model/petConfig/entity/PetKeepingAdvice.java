@@ -61,4 +61,10 @@ public class PetKeepingAdvice extends BaseEntity {
     @TableField
     private String remark;
 
+    @TableField(exist = false)
+    private String breedName;
+
+    @TableField(exist = false)
+    private String stageName;
+
 }

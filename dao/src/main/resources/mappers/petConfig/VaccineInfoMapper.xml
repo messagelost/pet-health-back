@@ -190,6 +190,9 @@
             <if test="manufacturer != null and manufacturer != ''">
                 AND vi.manufacturer LIKE CONCAT('%', #{manufacturer}, '%')
             </if>
+            <if test="vaccineNameSearch != null and vaccineNameSearch != ''">
+                AND ( vi.vaccine_name LIKE CONCAT('%', #{vaccineNameSearch}, '%') OR vi.vaccine_short LIKE CONCAT('%', #{vaccineNameSearch}, '%') )
+            </if>
         </where>
         <if test="custom_order_by != null and custom_order_by != ''">
             ORDER BY ${custom_order_by}

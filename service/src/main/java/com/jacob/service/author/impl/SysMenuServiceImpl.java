@@ -1,14 +1,11 @@
 package com.jacob.service.author.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jacob.common.model.author.entity.SysMenu;
-import com.jacob.common.model.author.entity.SysUserRole;
-import com.jacob.common.model.author.enums.MenuType;
-import com.jacob.common.model.base.PageResult;
+import com.jacob.common.model.author.enums.MenuTypeEnum;
 import com.jacob.common.redis.RedisConstant;
 import com.jacob.common.redis.RedisUtils;
 import com.jacob.common.utils.SnowflakeIdGenerator;
@@ -21,11 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -98,7 +92,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenu> imp
             existCatalog.setParentId("-1");
             existCatalog.setName(codeArr[0]);
             existCatalog.setTitle(codeArr[0]);
-            existCatalog.setMenuType(MenuType.CATALOG.getCode());
+            existCatalog.setMenuType(MenuTypeEnum.CATALOG.getCode());
             existCatalog.setPath("/"+codeArr[0]);
             existCatalog.setActiveMenu("/"+codeArr[0]);
 
@@ -121,7 +115,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenu> imp
             existMenu.setParentId(existCatalog.getMenuId());
             existMenu.setName(codeArr[1]);
             existMenu.setTitle(codeArr[1]);
-            existMenu.setMenuType(MenuType.MENU.getCode());
+            existMenu.setMenuType(MenuTypeEnum.MENU.getCode());
             existMenu.setPath("/"+codeArr[0]+"/"+codeArr[1]);
             existMenu.setActiveMenu("/"+codeArr[0]+"/"+codeArr[1]);
 
@@ -150,7 +144,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenuDao, SysMenu> imp
             menu.setParentId(existMenu.getMenuId());
             menu.setName(codeArr[2]);
             menu.setTitle(name);
-            menu.setMenuType(MenuType.BUTTON.getCode());
+            menu.setMenuType(MenuTypeEnum.BUTTON.getCode());
             menu.setAuthorStr(code);
 
             menu.setVisible(1);

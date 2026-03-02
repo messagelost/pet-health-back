@@ -83,15 +83,21 @@ public class VaccineInfo extends BaseEntity {
     private Integer intervalDays;
 
     /**
-     * 非数据库字段：适用品种ID列表（前端传递时拆分用）
+     * 适用宠物品种
      */
     @TableField(exist = false)
-    private List<String> breedIdList;
+    private String breedNames;
 
     /**
-     * 非数据库字段：有效期单位选项ID列表
+     * 适用宠物品种
      */
     @TableField(exist = false)
-    private List<String> periodUnitOptionIdList;
+    private String breedId;
+
+    /**
+     * 疫苗名称检索
+     */
+    @TableField(exist = false)
+    private String vaccineNameSearch;
 
 }

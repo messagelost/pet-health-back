@@ -16,6 +16,9 @@
         <result property="updateTime" column="update_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
+
+        <result property="breedName" column="breed_name"/>
+        <result property="stageName" column="stage_name"/>
     </resultMap>
 
     <!-- 基础字段列表：用于查询语句复用 -->
@@ -151,8 +154,10 @@
     <!-- 查询建议列表（带条件） -->
     <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>,pbr.breed_name,pls.stage_name
         FROM pet_keeping_advice pka
+        LEFT JOIN pet_breed pbr ON pka.breed_id = pbr.breed_id
+        LEFT JOIN pet_life_stage pls ON pka.life_stage = pls.stage_id
         <where>
             <if test="breedId != null and breedId != ''">
                 AND pka.breed_id = #{breedId}

@@ -3,7 +3,7 @@ package com.jacob.web.system;
 import cn.hutool.core.bean.BeanUtil;
 import com.jacob.common.annotation.ApiPermission;
 import com.jacob.common.model.author.entity.SysMenu;
-import com.jacob.common.model.author.enums.MenuType;
+import com.jacob.common.model.author.enums.MenuTypeEnum;
 import com.jacob.common.model.base.PageQuery;
 import com.jacob.common.model.base.PageResult;
 import com.jacob.common.model.base.ResponseVO;
@@ -36,7 +36,7 @@ public class SysMenuController{
 
         List<SysMenu> result = sysMenuService.listMenuByUserIdInCache(userId)
                 .stream()
-                .filter(m -> !Objects.equals(m.getMenuType(), MenuType.BUTTON.getCode())).toList();
+                .filter(m -> !Objects.equals(m.getMenuType(), MenuTypeEnum.BUTTON.getCode())).toList();
         return ResponseVO.success(result);
     }
 

@@ -2,13 +2,11 @@ package com.jacob.common.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component("RedisUtils")
@@ -69,6 +67,26 @@ public class RedisUtils {
                 redisTemplate.delete(key[0]);
             } else {
                 redisTemplate.delete((Collection<String>) CollectionUtils.arrayToList(key));
+            }
+        }
+    }
+
+    /**
+     * 删除缓存
+     * @param key 可以传一个值 或多个
+     */
+    @SuppressWarnings("unchecked")
+    public void delByPattern(String... key) {
+        if (key != null && key.length > 0) {
+            if (key.length == 1) {
+                redisTemplate.delete(redisTemplate.keys(key[0]));
+            } else {
+                for (String s : key) {
+                    Collection<String> keys = redisTemplate.keys(s);
+                    if (!CollectionUtils.isEmpty(keys)) {
+                        redisTemplate.delete(keys);
+                    }
+                }
             }
         }
     }

@@ -42,7 +42,7 @@ public class PetSpeciesController {
     @RequiresPermissions("petConfig:petSpecies:add")
     @ApiPermission(code = "petConfig:petSpecies:add", name = "添加宠物种类")
     public ResponseVO<?> add(@RequestBody PetSpecies petSpecies){
-        petSpecies.setSpeciesId(snowflakeIdGenerator.generateIdWithPrefix("MR"));
+        petSpecies.setSpeciesId(snowflakeIdGenerator.generateIdWithPrefix("S"));
         petSpecies.setCreateUserId(jwtUtil.getCurrentUserId());
         petSpecies.setUpdateUserId(jwtUtil.getCurrentUserId());
         petSpeciesService.insertWithBean(petSpecies);

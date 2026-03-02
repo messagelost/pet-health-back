@@ -34,7 +34,7 @@ public class PetIndicatorRuleController {
     @RequiresPermissions("petConfig:petIndicatorRule:add")
     @ApiPermission(code = "petConfig:petIndicatorRule:add", name = "添加指标适用规则")
     public ResponseVO<?> add(@RequestBody PetHealthIndicatorRule petIndicatorRule){
-        petIndicatorRule.setRuleId(snowflakeIdGenerator.generateIdWithPrefix("I"));
+        petIndicatorRule.setRuleId(snowflakeIdGenerator.generateIdWithPrefix("IR"));
         petIndicatorRule.setCreateUserId(jwtUtil.getCurrentUserId());
         petIndicatorRule.setUpdateUserId(jwtUtil.getCurrentUserId());
         petHealthIndicatorRuleService.insertWithBean(petIndicatorRule);
