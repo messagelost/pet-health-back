@@ -136,8 +136,8 @@
         SELECT COUNT(1)
         FROM pet_nutrition_standard
         <where>
-            <if test="breedId != null and breedId != ''">
-                AND FIND_IN_SET(#{breedId}, breed_ids)
+            <if test="breedIds != null and breedIds != ''">
+                AND FIND_IN_SET(#{breedIds}, breed_ids)
             </if>
             <if test="lifeStage != null and lifeStage != ''">
                 AND life_stage = #{lifeStage}
@@ -151,11 +151,12 @@
     <!-- 查询营养标准参考列表（带条件） -->
     <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>,pl.stage_name AS life_stage_name
         FROM pet_nutrition_standard pns
+        LEFT JOIN pet_life_stage pl ON pl.stage_id = pns.life_stage
         <where>
-            <if test="breedId != null and breedId != ''">
-                AND FIND_IN_SET(#{breedId}, pns.breed_ids)
+            <if test="breedIds != null and breedIds != ''">
+                AND FIND_IN_SET(#{breedIds}, pns.breed_ids)
             </if>
             <if test="lifeStage != null and lifeStage != ''">
                 AND pns.life_stage = #{lifeStage}
@@ -174,7 +175,7 @@
         SELECT
         <include refid="Base_Column_List"/>
         FROM pet_nutrition_standard pns
-        WHERE FIND_IN_SET(#{breedId}, pns.breed_ids)
+        WHERE FIND_IN_SET(#{breedIds}, pns.breed_ids)
         AND pns.life_stage = #{lifeStage}
         AND pns.config_id = #{configId}
         LIMIT 1

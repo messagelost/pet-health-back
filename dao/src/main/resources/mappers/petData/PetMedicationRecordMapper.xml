@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petData.PetMedicationRecordDao">
+
+    <!-- 基础结果映射：对应PetMedicationRecord实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petData.entity.PetMedicationRecord">
+        <id property="recordId" column="record_id"/>
+        <result property="petId" column="pet_id"/>
+        <result property="medicationName" column="medication_name"/>
+        <result property="medicationType" column="medication_type"/>
+        <result property="dosage" column="dosage"/>
+        <result property="recommendedDosage" column="recommended_dosage"/>
+        <result property="route" column="route"/>
+        <result property="startDate" column="start_date"/>
+        <result property="prescriber" column="prescriber"/>
+        <result property="remark" column="remark"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pmr.record_id,
+        pmr.pet_id,
+        pmr.medication_name,
+        pmr.medication_type,
+        pmr.dosage,
+        pmr.recommended_dosage,
+        pmr.route,
+        pmr.start_date,
+        pmr.prescriber,
+        pmr.remark,
+        pmr.create_time,
+        pmr.update_time,
+        pmr.create_user_id,
+        pmr.update_user_id
+    </sql>
+
+    <!-- 新增宠物用药记录 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petData.entity.PetMedicationRecord">
+        INSERT INTO pet_medication_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null and recordId != ''">
+                record_id,
+            </if>
+            <if test="petId != null and petId != ''">
+                pet_id,
+            </if>
+            <if test="medicationName != null and medicationName != ''">
+                medication_name,
+            </if>
+            <if test="medicationType != null">
+                medication_type,
+            </if>
+            <if test="dosage != null and dosage != ''">
+                dosage,
+            </if>
+            <if test="recommendedDosage != null and recommendedDosage != ''">
+                recommended_dosage,
+            </if>
+            <if test="route != null">
+                route,
+            </if>
+            <if test="startDate != null">
+                start_date,
+            </if>
+            <if test="prescriber != null and prescriber != ''">
+                prescriber,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null and recordId != ''">
+                #{recordId},
+            </if>
+            <if test="petId != null and petId != ''">
+                #{petId},
+            </if>
+            <if test="medicationName != null and medicationName != ''">
+                #{medicationName},
+            </if>
+            <if test="medicationType != null">
+                #{medicationType},
+            </if>
+            <if test="dosage != null and dosage != ''">
+                #{dosage},
+            </if>
+            <if test="recommendedDosage != null and recommendedDosage != ''">
+                #{recommendedDosage},
+            </if>
+            <if test="route != null">
+                #{route},
+            </if>
+            <if test="startDate != null">
+                #{startDate},
+            </if>
+            <if test="prescriber != null and prescriber != ''">
+                #{prescriber},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新宠物用药记录 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petData.entity.PetMedicationRecord">
+        UPDATE pet_medication_record
+        <set>
+            <if test="petId != null and petId != ''">pet_id = #{petId},</if>
+            <if test="medicationName != null and medicationName != ''">medication_name = #{medicationName},</if>
+            <if test="medicationType != null">medication_type = #{medicationType},</if>
+            <if test="dosage != null and dosage != ''">dosage = #{dosage},</if>
+            <if test="recommendedDosage != null and recommendedDosage != ''">recommended_dosage = #{recommendedDosage},</if>
+            <if test="route != null">route = #{route},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="prescriber != null and prescriber != ''">prescriber = #{prescriber},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE record_id = #{recordId}
+    </update>
+
+    <!-- 根据主键删除用药记录 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_medication_record WHERE record_id = #{recordId}
+    </delete>
+
+    <!-- 批量删除用药记录 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_medication_record
+        WHERE record_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计用药记录数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_medication_record
+        <where>
+            <if test="petId != null and petId != ''">
+                AND pet_id = #{petId}
+            </if>
+            <if test="medicationName != null and medicationName != ''">
+                AND medication_name LIKE CONCAT('%', #{medicationName}, '%')
+            </if>
+            <if test="medicationType != null">
+                AND medication_type = #{medicationType}
+            </if>
+            <if test="route != null">
+                AND route = #{route}
+            </if>
+            <if test="startDateStart != null">
+                AND start_date >= #{startDateStart}
+            </if>
+            <if test="startDateEnd != null">
+                AND start_date &lt;= #{startDateEnd}
+            </if>
+            <if test="prescriber != null and prescriber != ''">
+                AND prescriber LIKE CONCAT('%', #{prescriber}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询用药记录列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_medication_record pmr
+        <where>
+            <if test="petId != null and petId != ''">
+                AND pmr.pet_id = #{petId}
+            </if>
+            <if test="medicationName != null and medicationName != ''">
+                AND pmr.medication_name LIKE CONCAT('%', #{medicationName}, '%')
+            </if>
+            <if test="medicationType != null">
+                AND pmr.medication_type = #{medicationType}
+            </if>
+            <if test="route != null">
+                AND pmr.route = #{route}
+            </if>
+            <if test="startDateStart != null">
+                AND pmr.start_date >= #{startDateStart}
+            </if>
+            <if test="startDateEnd != null">
+                AND pmr.start_date &lt;= #{startDateEnd}
+            </if>
+            <if test="prescriber != null and prescriber != ''">
+                AND pmr.prescriber LIKE CONCAT('%', #{prescriber}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 根据宠物ID查询用药记录列表（常用快捷查询） -->
+    <select id="selectByPetId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_medication_record pmr
+        WHERE pmr.pet_id = #{petId}
+        ORDER BY pmr.start_date DESC
+    </select>
+
+    <!-- 根据药物类型查询记录列表（常用快捷查询） -->
+    <select id="selectByMedicationType" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_medication_record pmr
+        WHERE pmr.medication_type = #{medicationType}
+        ORDER BY pmr.start_date DESC
+    </select>
+
+</mapper>

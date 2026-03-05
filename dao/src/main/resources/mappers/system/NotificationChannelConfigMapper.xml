@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.system.NotificationChannelConfigDao">
+
+    <!-- 基础结果映射：对应NotificationChannelConfig实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.system.entity.NotificationChannelConfig">
+        <id property="channelId" column="channel_id"/>
+        <result property="channel" column="channel"/>
+        <result property="provider" column="provider"/>
+        <result property="configJson" column="config_json"/>
+        <result property="status" column="status"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        ncc.channel_id,
+        ncc.channel,
+        ncc.provider,
+        ncc.config_json,
+        ncc.status,
+        ncc.create_time,
+        ncc.update_time,
+        ncc.create_user_id,
+        ncc.update_user_id
+    </sql>
+
+    <!-- 新增通知渠道配置 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.system.entity.NotificationChannelConfig">
+        INSERT INTO notification_channel_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channelId != null and channelId != ''">
+                channel_id,
+            </if>
+            <if test="channel != null and channel != ''">
+                channel,
+            </if>
+            <if test="provider != null and provider != ''">
+                provider,
+            </if>
+            <if test="configJson != null and configJson != ''">
+                config_json,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channelId != null and channelId != ''">
+                #{channelId},
+            </if>
+            <if test="channel != null and channel != ''">
+                #{channel},
+            </if>
+            <if test="provider != null and provider != ''">
+                #{provider},
+            </if>
+            <if test="configJson != null and configJson != ''">
+                #{configJson},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新通知渠道配置 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.system.entity.NotificationChannelConfig">
+        UPDATE notification_channel_config
+        <set>
+            <if test="channel != null and channel != ''">channel = #{channel},</if>
+            <if test="provider != null and provider != ''">provider = #{provider},</if>
+            <if test="configJson != null and configJson != ''">config_json = #{configJson},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE channel_id = #{channelId}
+    </update>
+
+    <!-- 根据主键删除渠道配置 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM notification_channel_config WHERE channel_id = #{channelId}
+    </delete>
+
+    <!-- 批量删除渠道配置 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM notification_channel_config
+        WHERE channel_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计渠道配置数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM notification_channel_config
+        <where>
+            <if test="channel != null and channel != ''">
+                AND channel LIKE CONCAT('%', #{channel}, '%')
+            </if>
+            <if test="provider != null and provider != ''">
+                AND provider LIKE CONCAT('%', #{provider}, '%')
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询渠道配置列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM notification_channel_config ncc
+        <where>
+            <if test="channel != null and channel != ''">
+                AND ncc.channel LIKE CONCAT('%', #{channel}, '%')
+            </if>
+            <if test="provider != null and provider != ''">
+                AND ncc.provider LIKE CONCAT('%', #{provider}, '%')
+            </if>
+            <if test="status != null">
+                AND ncc.status = #{status}
+            </if>
+        </where>
+        ORDER BY ncc.create_time DESC
+    </select>
+
+    <!-- 根据渠道ID查询配置（核心业务查询） -->
+    <select id="selectByChannelId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM notification_channel_config ncc
+        WHERE ncc.channel_id = #{channelId}
+    </select>
+
+    <!-- 查询启用的渠道配置（核心业务查询） -->
+    <select id="selectEnableChannels" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM notification_channel_config ncc
+        WHERE ncc.status = 1
+        <if test="channel != null and channel != ''">
+            AND ncc.channel = #{channel}
+        </if>
+        ORDER BY ncc.create_time DESC
+    </select>
+
+</mapper>

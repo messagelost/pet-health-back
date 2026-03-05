@@ -29,7 +29,7 @@ public class PetNutritionStandard extends BaseEntity {
     private String standardId;
 
     /**
-     * 适用宠物品种ID（多个用逗号分隔）
+     * 适用宠物品种ID
      */
     @TableField
     private String breedIds;
@@ -64,10 +64,8 @@ public class PetNutritionStandard extends BaseEntity {
     @TableField
     private BigDecimal recommend;
 
-    /**
-     * 非数据库字段：适用品种ID列表（前端传递时拆分用）
-     */
+
     @TableField(exist = false)
-    private List<String> breedIdList;
+    private String lifeStageName;
 
 }

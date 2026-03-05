@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petData.PetVaccineRecordDao">
+
+    <!-- 基础结果映射：对应PetVaccineRecord实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petData.entity.PetVaccineRecord">
+        <id property="recordId" column="record_id"/>
+        <result property="petId" column="pet_id"/>
+        <result property="breedId" column="breed_id"/>
+        <result property="vaccineId" column="vaccine_id"/>
+        <result property="injectionDate" column="injection_date"/>
+        <result property="injectionSite" column="injection_site"/>
+        <result property="hospitalName" column="hospital_name"/>
+        <result property="vetName" column="vet_name"/>
+        <result property="totalCost" column="total_cost"/>
+        <result property="reactionStatus" column="reaction_status"/>
+        <result property="remark" column="remark"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pvr.record_id,
+        pvr.pet_id,
+        pvr.breed_id,
+        pvr.vaccine_id,
+        pvr.injection_date,
+        pvr.injection_site,
+        pvr.hospital_name,
+        pvr.vet_name,
+        pvr.total_cost,
+        pvr.reaction_status,
+        pvr.remark,
+        pvr.create_time,
+        pvr.update_time,
+        pvr.create_user_id,
+        pvr.update_user_id
+    </sql>
+
+    <!-- 新增宠物疫苗记录 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petData.entity.PetVaccineRecord">
+        INSERT INTO pet_vaccine_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null and recordId != ''">
+                record_id,
+            </if>
+            <if test="petId != null and petId != ''">
+                pet_id,
+            </if>
+            <if test="breedId != null and breedId != ''">
+                breed_id,
+            </if>
+            <if test="vaccineId != null and vaccineId != ''">
+                vaccine_id,
+            </if>
+            <if test="injectionDate != null">
+                injection_date,
+            </if>
+            <if test="injectionSite != null">
+                injection_site,
+            </if>
+            <if test="hospitalName != null and hospitalName != ''">
+                hospital_name,
+            </if>
+            <if test="vetName != null and vetName != ''">
+                vet_name,
+            </if>
+            <if test="totalCost != null">
+                total_cost,
+            </if>
+            <if test="reactionStatus != null">
+                reaction_status,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null and recordId != ''">
+                #{recordId},
+            </if>
+            <if test="petId != null and petId != ''">
+                #{petId},
+            </if>
+            <if test="breedId != null and breedId != ''">
+                #{breedId},
+            </if>
+            <if test="vaccineId != null and vaccineId != ''">
+                #{vaccineId},
+            </if>
+            <if test="injectionDate != null">
+                #{injectionDate},
+            </if>
+            <if test="injectionSite != null">
+                #{injectionSite},
+            </if>
+            <if test="hospitalName != null and hospitalName != ''">
+                #{hospitalName},
+            </if>
+            <if test="vetName != null and vetName != ''">
+                #{vetName},
+            </if>
+            <if test="totalCost != null">
+                #{totalCost},
+            </if>
+            <if test="reactionStatus != null">
+                #{reactionStatus},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新宠物疫苗记录 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petData.entity.PetVaccineRecord">
+        UPDATE pet_vaccine_record
+        <set>
+            <if test="petId != null and petId != ''">pet_id = #{petId},</if>
+            <if test="breedId != null and breedId != ''">breed_id = #{breedId},</if>
+            <if test="vaccineId != null and vaccineId != ''">vaccine_id = #{vaccineId},</if>
+            <if test="injectionDate != null">injection_date = #{injectionDate},</if>
+            <if test="injectionSite != null">injection_site = #{injectionSite},</if>
+            <if test="hospitalName != null and hospitalName != ''">hospital_name = #{hospitalName},</if>
+            <if test="vetName != null and vetName != ''">vet_name = #{vetName},</if>
+            <if test="totalCost != null">total_cost = #{totalCost},</if>
+            <if test="reactionStatus != null">reaction_status = #{reactionStatus},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE record_id = #{recordId}
+    </update>
+
+    <!-- 根据主键删除疫苗记录 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_vaccine_record WHERE record_id = #{recordId}
+    </delete>
+
+    <!-- 批量删除疫苗记录 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_vaccine_record
+        WHERE record_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计疫苗记录数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_vaccine_record
+        <where>
+            <if test="petId != null and petId != ''">
+                AND pet_id = #{petId}
+            </if>
+            <if test="vaccineId != null and vaccineId != ''">
+                AND vaccine_id = #{vaccineId}
+            </if>
+            <if test="injectionDateStart != null">
+                AND injection_date >= #{injectionDateStart}
+            </if>
+            <if test="injectionDateEnd != null">
+                AND injection_date &lt;= #{injectionDateEnd}
+            </if>
+            <if test="reactionStatus != null">
+                AND reaction_status = #{reactionStatus}
+            </if>
+            <if test="hospitalName != null and hospitalName != ''">
+                AND hospital_name LIKE CONCAT('%', #{hospitalName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询疫苗记录列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_vaccine_record pvr
+        <where>
+            <if test="petId != null and petId != ''">
+                AND pvr.pet_id = #{petId}
+            </if>
+            <if test="vaccineId != null and vaccineId != ''">
+                AND pvr.vaccine_id = #{vaccineId}
+            </if>
+            <if test="injectionDateStart != null">
+                AND pvr.injection_date >= #{injectionDateStart}
+            </if>
+            <if test="injectionDateEnd != null">
+                AND pvr.injection_date &lt;= #{injectionDateEnd}
+            </if>
+            <if test="reactionStatus != null">
+                AND pvr.reaction_status = #{reactionStatus}
+            </if>
+            <if test="hospitalName != null and hospitalName != ''">
+                AND pvr.hospital_name LIKE CONCAT('%', #{hospitalName}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 根据宠物ID查询疫苗记录列表（常用快捷查询） -->
+    <select id="selectByPetId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_vaccine_record pvr
+        WHERE pvr.pet_id = #{petId}
+        ORDER BY pvr.injection_date DESC
+    </select>
+
+    <!-- 根据疫苗ID查询接种记录列表（常用快捷查询） -->
+    <select id="selectByVaccineId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_vaccine_record pvr
+        WHERE pvr.vaccine_id = #{vaccineId}
+        ORDER BY pvr.injection_date DESC
+    </select>
+
+</mapper>

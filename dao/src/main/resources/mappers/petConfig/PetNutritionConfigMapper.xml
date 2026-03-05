@@ -13,6 +13,8 @@
         <result property="updateTime" column="update_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
+
+        <result property="hasChildren" column="has_children"/>
     </resultMap>
 
     <!-- 树形结构结果映射：包含子级列表 -->
@@ -127,7 +129,8 @@
     <!-- 查询营养成分配置列表（带条件） -->
     <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>,
+        CASE WHEN (SELECT COUNT(1) FROM pet_nutrition_config WHERE parent_id = pnc.config_id) > 0 THEN 'true' ELSE 'false' END AS has_children
         FROM pet_nutrition_config pnc
         <where>
             <if test="parentId != null and parentId != ''">

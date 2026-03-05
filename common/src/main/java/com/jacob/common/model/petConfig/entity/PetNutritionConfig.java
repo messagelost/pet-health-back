@@ -34,10 +34,10 @@ public class PetNutritionConfig extends BaseEntity {
     private String parentId;
 
     /**
-     * 营养成分（整型：对应字典码值）
+     * 营养成分
      */
     @TableField
-    private Integer nutritionName;
+    private String nutritionName;
 
     /**
      * 单位（整型：对应字典码值）
@@ -52,15 +52,9 @@ public class PetNutritionConfig extends BaseEntity {
     private List<PetNutritionConfig> children;
 
     /**
-     * 非数据库字段：营养成分名称（字典解析值，前端展示用）
+     * 非数据库字段：是否有子级
      */
     @TableField(exist = false)
-    private String nutritionNameLabel;
-
-    /**
-     * 非数据库字段：单位名称（字典解析值，前端展示用）
-     */
-    @TableField(exist = false)
-    private String unitLabel;
+    private boolean hasChildren;
 
 }

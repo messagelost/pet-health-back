@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petData.PetBasicInfoDao">
+
+    <!-- 基础结果映射：对应PetBasicInfo实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petData.entity.PetBasicInfo">
+        <id property="petId" column="pet_id"/>
+        <result property="breedId" column="breed_id"/>
+        <result property="petName" column="pet_name"/>
+        <result property="userId" column="user_id"/>
+        <result property="petBirthday" column="pet_birthday"/>
+        <result property="petSex" column="pet_sex"/>
+        <result property="neutered" column="neutered"/>
+        <result property="pregnant" column="pregnant"/>
+        <result property="lifeStage" column="life_stage"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pbi.pet_id,
+        pbi.breed_id,
+        pbi.pet_name,
+        pbi.user_id,
+        pbi.pet_birthday,
+        pbi.pet_sex,
+        pbi.neutered,
+        pbi.pregnant,
+        pbi.life_stage,
+        pbi.create_time,
+        pbi.update_time,
+        pbi.create_user_id,
+        pbi.update_user_id
+    </sql>
+
+    <!-- 新增宠物基础信息 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petData.entity.PetBasicInfo">
+        INSERT INTO pet_basic_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="petId != null and petId != ''">
+                pet_id,
+            </if>
+            <if test="breedId != null and breedId != ''">
+                breed_id,
+            </if>
+            <if test="petName != null and petName != ''">
+                pet_name,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="petBirthday != null">
+                pet_birthday,
+            </if>
+            <if test="petSex != null">
+                pet_sex,
+            </if>
+            <if test="neutered != null">
+                neutered,
+            </if>
+            <if test="pregnant != null">
+                pregnant,
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                life_stage,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="petId != null and petId != ''">
+                #{petId},
+            </if>
+            <if test="breedId != null and breedId != ''">
+                #{breedId},
+            </if>
+            <if test="petName != null and petName != ''">
+                #{petName},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="petBirthday != null">
+                #{petBirthday},
+            </if>
+            <if test="petSex != null">
+                #{petSex},
+            </if>
+            <if test="neutered != null">
+                #{neutered},
+            </if>
+            <if test="pregnant != null">
+                #{pregnant},
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                #{lifeStage},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新宠物基础信息 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petData.entity.PetBasicInfo">
+        UPDATE pet_basic_info
+        <set>
+            <if test="breedId != null and breedId != ''">breed_id = #{breedId},</if>
+            <if test="petName != null and petName != ''">pet_name = #{petName},</if>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="petBirthday != null">pet_birthday = #{petBirthday},</if>
+            <if test="petSex != null">pet_sex = #{petSex},</if>
+            <if test="neutered != null">neutered = #{neutered},</if>
+            <if test="pregnant != null">pregnant = #{pregnant},</if>
+            <if test="lifeStage != null and lifeStage != ''">life_stage = #{lifeStage},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE pet_id = #{petId}
+    </update>
+
+    <!-- 根据主键删除宠物基础信息 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_basic_info WHERE pet_id = #{petId}
+    </delete>
+
+    <!-- 批量删除宠物基础信息 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_basic_info
+        WHERE pet_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计宠物基础信息数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_basic_info
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND breed_id = #{breedId}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="petName != null and petName != ''">
+                AND pet_name LIKE CONCAT('%', #{petName}, '%')
+            </if>
+            <if test="petSex != null">
+                AND pet_sex = #{petSex}
+            </if>
+            <if test="neutered != null">
+                AND neutered = #{neutered}
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                AND life_stage = #{lifeStage}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询宠物基础信息列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_basic_info pbi
+        <where>
+            <if test="breedId != null and breedId != ''">
+                AND pbi.breed_id = #{breedId}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND pbi.user_id = #{userId}
+            </if>
+            <if test="petName != null and petName != ''">
+                AND pbi.pet_name LIKE CONCAT('%', #{petName}, '%')
+            </if>
+            <if test="petSex != null">
+                AND pbi.pet_sex = #{petSex}
+            </if>
+            <if test="neutered != null">
+                AND pbi.neutered = #{neutered}
+            </if>
+            <if test="lifeStage != null and lifeStage != ''">
+                AND pbi.life_stage = #{lifeStage}
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 根据主人ID查询宠物列表（常用快捷查询） -->
+    <select id="selectByUserId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_basic_info pbi
+        WHERE pbi.user_id = #{userId}
+        ORDER BY pbi.pet_name ASC
+    </select>
+
+    <!-- 根据品种ID查询宠物列表（常用快捷查询） -->
+    <select id="selectByBreedId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_basic_info pbi
+        WHERE pbi.breed_id = #{breedId}
+        ORDER BY pbi.pet_birthday DESC
+    </select>
+
+</mapper>

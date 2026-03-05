@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petData.PetDewormingRecordDao">
+
+    <!-- 基础结果映射：对应PetDewormingRecord实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petData.entity.PetDewormingRecord">
+        <id property="recordId" column="record_id"/>
+        <result property="petId" column="pet_id"/>
+        <result property="medicineId" column="medicine_id"/>
+        <result property="dewormingType" column="deworming_type"/>
+        <result property="dewormingDate" column="deworming_date"/>
+        <result property="dosage" column="dosage"/>
+        <result property="dosageUnit" column="dosage_unit"/>
+        <result property="hospitalName" column="hospital_name"/>
+        <result property="vetName" column="vet_name"/>
+        <result property="totalCost" column="total_cost"/>
+        <result property="reactionStatus" column="reaction_status"/>
+        <result property="remark" column="remark"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pdr.record_id,
+        pdr.pet_id,
+        pdr.medicine_id,
+        pdr.deworming_type,
+        pdr.deworming_date,
+        pdr.dosage,
+        pdr.dosage_unit,
+        pdr.hospital_name,
+        pdr.vet_name,
+        pdr.total_cost,
+        pdr.reaction_status,
+        pdr.remark,
+        pdr.create_time,
+        pdr.update_time,
+        pdr.create_user_id,
+        pdr.update_user_id
+    </sql>
+
+    <!-- 新增宠物驱虫记录 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petData.entity.PetDewormingRecord">
+        INSERT INTO pet_deworming_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null and recordId != ''">
+                record_id,
+            </if>
+            <if test="petId != null and petId != ''">
+                pet_id,
+            </if>
+            <if test="medicineId != null and medicineId != ''">
+                medicine_id,
+            </if>
+            <if test="dewormingType != null">
+                deworming_type,
+            </if>
+            <if test="dewormingDate != null">
+                deworming_date,
+            </if>
+            <if test="dosage != null">
+                dosage,
+            </if>
+            <if test="dosageUnit != null">
+                dosage_unit,
+            </if>
+            <if test="hospitalName != null and hospitalName != ''">
+                hospital_name,
+            </if>
+            <if test="vetName != null and vetName != ''">
+                vet_name,
+            </if>
+            <if test="totalCost != null">
+                total_cost,
+            </if>
+            <if test="reactionStatus != null">
+                reaction_status,
+            </if>
+            <if test="remark != null and remark != ''">
+                remark,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordId != null and recordId != ''">
+                #{recordId},
+            </if>
+            <if test="petId != null and petId != ''">
+                #{petId},
+            </if>
+            <if test="medicineId != null and medicineId != ''">
+                #{medicineId},
+            </if>
+            <if test="dewormingType != null">
+                #{dewormingType},
+            </if>
+            <if test="dewormingDate != null">
+                #{dewormingDate},
+            </if>
+            <if test="dosage != null">
+                #{dosage},
+            </if>
+            <if test="dosageUnit != null">
+                #{dosageUnit},
+            </if>
+            <if test="hospitalName != null and hospitalName != ''">
+                #{hospitalName},
+            </if>
+            <if test="vetName != null and vetName != ''">
+                #{vetName},
+            </if>
+            <if test="totalCost != null">
+                #{totalCost},
+            </if>
+            <if test="reactionStatus != null">
+                #{reactionStatus},
+            </if>
+            <if test="remark != null and remark != ''">
+                #{remark},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新宠物驱虫记录 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petData.entity.PetDewormingRecord">
+        UPDATE pet_deworming_record
+        <set>
+            <if test="petId != null and petId != ''">pet_id = #{petId},</if>
+            <if test="medicineId != null and medicineId != ''">medicine_id = #{medicineId},</if>
+            <if test="dewormingType != null">deworming_type = #{dewormingType},</if>
+            <if test="dewormingDate != null">deworming_date = #{dewormingDate},</if>
+            <if test="dosage != null">dosage = #{dosage},</if>
+            <if test="dosageUnit != null">dosage_unit = #{dosageUnit},</if>
+            <if test="hospitalName != null and hospitalName != ''">hospital_name = #{hospitalName},</if>
+            <if test="vetName != null and vetName != ''">vet_name = #{vetName},</if>
+            <if test="totalCost != null">total_cost = #{totalCost},</if>
+            <if test="reactionStatus != null">reaction_status = #{reactionStatus},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE record_id = #{recordId}
+    </update>
+
+    <!-- 根据主键删除驱虫记录 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_deworming_record WHERE record_id = #{recordId}
+    </delete>
+
+    <!-- 批量删除驱虫记录 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_deworming_record
+        WHERE record_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计驱虫记录数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_deworming_record
+        <where>
+            <if test="petId != null and petId != ''">
+                AND pet_id = #{petId}
+            </if>
+            <if test="medicineId != null and medicineId != ''">
+                AND medicine_id = #{medicineId}
+            </if>
+            <if test="dewormingType != null">
+                AND deworming_type = #{dewormingType}
+            </if>
+            <if test="dewormingDateStart != null">
+                AND deworming_date >= #{dewormingDateStart}
+            </if>
+            <if test="dewormingDateEnd != null">
+                AND deworming_date &lt;= #{dewormingDateEnd}
+            </if>
+            <if test="reactionStatus != null">
+                AND reaction_status = #{reactionStatus}
+            </if>
+            <if test="hospitalName != null and hospitalName != ''">
+                AND hospital_name LIKE CONCAT('%', #{hospitalName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询驱虫记录列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_deworming_record pdr
+        <where>
+            <if test="petId != null and petId != ''">
+                AND pdr.pet_id = #{petId}
+            </if>
+            <if test="medicineId != null and medicineId != ''">
+                AND pdr.medicine_id = #{medicineId}
+            </if>
+            <if test="dewormingType != null">
+                AND pdr.deworming_type = #{dewormingType}
+            </if>
+            <if test="dewormingDateStart != null">
+                AND pdr.deworming_date >= #{dewormingDateStart}
+            </if>
+            <if test="dewormingDateEnd != null">
+                AND pdr.deworming_date &lt;= #{dewormingDateEnd}
+            </if>
+            <if test="reactionStatus != null">
+                AND pdr.reaction_status = #{reactionStatus}
+            </if>
+            <if test="hospitalName != null and hospitalName != ''">
+                AND pdr.hospital_name LIKE CONCAT('%', #{hospitalName}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+    </select>
+
+    <!-- 根据宠物ID查询驱虫记录列表（常用快捷查询） -->
+    <select id="selectByPetId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_deworming_record pdr
+        WHERE pdr.pet_id = #{petId}
+        ORDER BY pdr.deworming_date DESC
+    </select>
+
+    <!-- 根据驱虫类型查询记录列表（常用快捷查询） -->
+    <select id="selectByDewormingType" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_deworming_record pdr
+        WHERE pdr.deworming_type = #{dewormingType}
+        ORDER BY pdr.deworming_date DESC
+    </select>
+
+</mapper>

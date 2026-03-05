@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petData.PetEventDao">
+
+    <!-- 基础结果映射：对应PetEvent实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petData.entity.PetEvent">
+        <id property="eventId" column="event_id"/>
+        <result property="petId" column="pet_id"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventName" column="event_name"/>
+        <result property="scheduleDate" column="schedule_date"/>
+        <result property="remindBeforeDays" column="remind_before_days"/>
+        <result property="status" column="status"/>
+        <result property="isRepeat" column="is_repeat"/>
+        <result property="frequency" column="frequency"/>
+        <result property="endDate" column="end_date"/>
+        <result property="lastExecuteDate" column="last_execute_date"/>
+        <result property="channelId" column="channel_id"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        pe.event_id,
+        pe.pet_id,
+        pe.event_type,
+        pe.event_name,
+        pe.schedule_date,
+        pe.remind_before_days,
+        pe.status,
+        pe.is_repeat,
+        pe.frequency,
+        pe.end_date,
+        pe.last_execute_date,
+        pe.channel_id,
+        pe.create_time,
+        pe.update_time,
+        pe.create_user_id,
+        pe.update_user_id
+    </sql>
+
+    <!-- 新增宠物事件调度记录 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petData.entity.PetEvent">
+        INSERT INTO pet_event
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventId != null and eventId != ''">
+                event_id,
+            </if>
+            <if test="petId != null and petId != ''">
+                pet_id,
+            </if>
+            <if test="eventType != null">
+                event_type,
+            </if>
+            <if test="eventName != null and eventName != ''">
+                event_name,
+            </if>
+            <if test="scheduleDate != null">
+                schedule_date,
+            </if>
+            <if test="remindBeforeDays != null">
+                remind_before_days,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="isRepeat != null">
+                is_repeat,
+            </if>
+            <if test="frequency != null">
+                frequency,
+            </if>
+            <if test="endDate != null">
+                end_date,
+            </if>
+            <if test="lastExecuteDate != null">
+                last_execute_date,
+            </if>
+            <if test="channelId != null and channelId != ''">
+                channel_id,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventId != null and eventId != ''">
+                #{eventId},
+            </if>
+            <if test="petId != null and petId != ''">
+                #{petId},
+            </if>
+            <if test="eventType != null">
+                #{eventType},
+            </if>
+            <if test="eventName != null and eventName != ''">
+                #{eventName},
+            </if>
+            <if test="scheduleDate != null">
+                #{scheduleDate},
+            </if>
+            <if test="remindBeforeDays != null">
+                #{remindBeforeDays},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="isRepeat != null">
+                #{isRepeat},
+            </if>
+            <if test="frequency != null">
+                #{frequency},
+            </if>
+            <if test="endDate != null">
+                #{endDate},
+            </if>
+            <if test="lastExecuteDate != null">
+                #{lastExecuteDate},
+            </if>
+            <if test="channelId != null and channelId != ''">
+                #{channelId},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新宠物事件调度记录 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petData.entity.PetEvent">
+        UPDATE pet_event
+        <set>
+            <if test="petId != null and petId != ''">pet_id = #{petId},</if>
+            <if test="eventType != null">event_type = #{eventType},</if>
+            <if test="eventName != null and eventName != ''">event_name = #{eventName},</if>
+            <if test="scheduleDate != null">schedule_date = #{scheduleDate},</if>
+            <if test="remindBeforeDays != null">remind_before_days = #{remindBeforeDays},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="isRepeat != null">is_repeat = #{isRepeat},</if>
+            <if test="frequency != null">frequency = #{frequency},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            <if test="lastExecuteDate != null">last_execute_date = #{lastExecuteDate},</if>
+            <if test="channelId != null and channelId != ''">channel_id = #{channelId},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE event_id = #{eventId}
+    </update>
+
+    <!-- 根据主键删除事件调度记录 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_event WHERE event_id = #{eventId}
+    </delete>
+
+    <!-- 批量删除事件调度记录 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_event
+        WHERE event_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计事件调度记录数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_event
+        <where>
+            <if test="petId != null and petId != ''">
+                AND pet_id = #{petId}
+            </if>
+            <if test="eventType != null">
+                AND event_type = #{eventType}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="isRepeat != null">
+                AND is_repeat = #{isRepeat}
+            </if>
+            <if test="scheduleDateStart != null">
+                AND schedule_date >= #{scheduleDateStart}
+            </if>
+            <if test="scheduleDateEnd != null">
+                AND schedule_date &lt;= #{scheduleDateEnd}
+            </if>
+            <if test="eventName != null and eventName != ''">
+                AND event_name LIKE CONCAT('%', #{eventName}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询事件调度记录列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_event pe
+        <where>
+            <if test="petId != null and petId != ''">
+                AND pe.pet_id = #{petId}
+            </if>
+            <if test="eventType != null">
+                AND pe.event_type = #{eventType}
+            </if>
+            <if test="status != null">
+                AND pe.status = #{status}
+            </if>
+            <if test="isRepeat != null">
+                AND pe.is_repeat = #{isRepeat}
+            </if>
+            <if test="scheduleDateStart != null">
+                AND pe.schedule_date >= #{scheduleDateStart}
+            </if>
+            <if test="scheduleDateEnd != null">
+                AND pe.schedule_date &lt;= #{scheduleDateEnd}
+            </if>
+            <if test="eventName != null and eventName != ''">
+                AND pe.event_name LIKE CONCAT('%', #{eventName}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+        <!-- 默认按计划执行日期升序（即将到期的在前） -->
+        <if test="custom_order_by == null or custom_order_by == ''">
+            ORDER BY pe.schedule_date ASC
+        </if>
+    </select>
+
+    <!-- 根据宠物ID查询事件调度记录列表（常用快捷查询） -->
+    <select id="selectByPetId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_event pe
+        WHERE pe.pet_id = #{petId}
+        ORDER BY pe.schedule_date ASC
+    </select>
+
+    <!-- 查询待提醒事件（核心业务查询：未提醒且提醒时间已到） -->
+    <select id="selectRemindEvents" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_event pe
+        WHERE pe.status = 0
+        AND DATE_SUB(pe.schedule_date, INTERVAL pe.remind_before_days DAY) &lt;= CURDATE()
+        <if test="petId != null and petId != ''">
+            AND pe.pet_id = #{petId}
+        </if>
+        ORDER BY pe.schedule_date ASC
+    </select>
+
+</mapper>
