@@ -120,4 +120,12 @@
             ORDER BY ${custom_order_by}
         </if>
     </select>
+
+    <select id="getSpeciesByBreed" resultType="com.jacob.common.model.petConfig.entity.PetSpecies">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM pet_species ps
+        LEFT JOIN pet_breed pb ON ps.species_id = pb.species_id
+        WHERE pb.breed_id = #{breedId}
+    </select>
 </mapper>

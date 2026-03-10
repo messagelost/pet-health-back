@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.petData.PetEventReminderDao">
+
+    <!-- 基础结果映射：仅包含提醒规则表字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.petData.entity.PetEventReminder">
+        <id property="reminderId" column="reminder_id"/>
+        <result property="eventId" column="event_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="channel" column="channel"/>
+        <result property="templateId" column="template_id"/>
+        <result property="remindType" column="remind_type"/>
+        <result property="cronExpr" column="cron_expr"/>
+        <result property="nextTriggerTime" column="next_trigger_time"/>
+        <result property="status" column="status"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 联表结果映射 -->
+    <resultMap id="JoinResultMap" type="com.jacob.common.model.petData.entity.PetEventReminder" extends="BaseResultMap">
+        <result property="eventContent" column="event_content"/>
+        <result property="appointmentTime" column="appointment_time"/>
+    </resultMap>
+
+    <!-- 基础字段列表（仅提醒规则表） -->
+    <sql id="Base_Column_List">
+        per.reminder_id,
+        per.event_id,
+        per.user_id,
+        per.channel,
+        per.template_id,
+        per.remind_type,
+        per.cron_expr,
+        per.next_trigger_time,
+        per.status,
+        per.create_time,
+        per.update_time,
+        per.create_user_id,
+        per.update_user_id
+    </sql>
+
+    <!-- 联表字段列表（包含预约表+用户表） -->
+    <sql id="Join_Column_List">
+        <include refid="Base_Column_List"/>,
+        pe.event_content,
+        pe.appointment_time,
+    </sql>
+
+    <!-- 新增提醒规则 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.petData.entity.PetEventReminder">
+        INSERT INTO pet_event_reminder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reminderId != null and reminderId != ''">
+                reminder_id,
+            </if>
+            <if test="eventId != null and eventId != ''">
+                event_id,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="channel != null and channel != ''">
+                channel,
+            </if>
+            <if test="templateId != null and templateId != ''">
+                template_id,
+            </if>
+            <if test="remindType != null and remindType != ''">
+                remind_type,
+            </if>
+            <if test="cronExpr != null and cronExpr != ''">
+                cron_expr,
+            </if>
+            <if test="nextTriggerTime != null">
+                next_trigger_time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reminderId != null and reminderId != ''">
+                #{reminderId},
+            </if>
+            <if test="eventId != null and eventId != ''">
+                #{eventId},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="channel != null and channel != ''">
+                #{channel},
+            </if>
+            <if test="templateId != null and templateId != ''">
+                #{templateId},
+            </if>
+            <if test="remindType != null and remindType != ''">
+                #{remindType},
+            </if>
+            <if test="cronExpr != null and cronExpr != ''">
+                #{cronExpr},
+            </if>
+            <if test="nextTriggerTime != null">
+                #{nextTriggerTime},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新提醒规则 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.petData.entity.PetEventReminder">
+        UPDATE pet_event_reminder
+        <set>
+            <if test="eventId != null and eventId != ''">event_id = #{eventId},</if>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="channel != null and channel != ''">channel = #{channel},</if>
+            <if test="templateId != null and templateId != ''">template_id = #{templateId},</if>
+            <if test="remindType != null and remindType != ''">remind_type = #{remindType},</if>
+            <if test="cronExpr != null and cronExpr != ''">cron_expr = #{cronExpr},</if>
+            <if test="nextTriggerTime != null">next_trigger_time = #{nextTriggerTime},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE reminder_id = #{reminderId}
+    </update>
+
+    <!-- 根据主键删除提醒规则 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM pet_event_reminder WHERE reminder_id = #{reminderId}
+    </delete>
+
+    <!-- 批量删除提醒规则 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM pet_event_reminder
+        WHERE reminder_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计提醒规则数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM pet_event_reminder per
+        LEFT JOIN pet_event pe ON per.event_id = pe.event_id
+        LEFT JOIN sys_user su ON per.user_id = su.user_id
+        <where>
+            <if test="reminderId != null and reminderId != ''">
+                AND per.reminder_id = #{reminderId}
+            </if>
+            <if test="eventId != null and eventId != ''">
+                AND per.event_id = #{eventId}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND per.user_id = #{userId}
+            </if>
+            <if test="channel != null and channel != ''">
+                AND per.channel = #{channel}
+            </if>
+            <if test="status != null">
+                AND per.status = #{status}
+            </if>
+            <!-- 下次执行时间范围查询 -->
+            <if test="startTime != null">
+                AND per.next_trigger_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND per.next_trigger_time &lt;= #{endTime}
+            </if>
+            <!-- 预约时间筛选（联表条件） -->
+            <if test="appointmentTime != null">
+                AND pe.appointment_time = #{appointmentTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询提醒规则列表 -->
+    <select id="selectAllList" resultMap="JoinResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Join_Column_List"/>
+        FROM pet_event_reminder per
+        LEFT JOIN pet_event pe ON per.event_id = pe.event_id
+        <where>
+            <if test="reminderId != null and reminderId != ''">
+                AND per.reminder_id = #{reminderId}
+            </if>
+            <if test="eventId != null and eventId != ''">
+                AND per.event_id = #{eventId}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND per.user_id = #{userId}
+            </if>
+            <if test="channel != null and channel != ''">
+                AND per.channel = #{channel}
+            </if>
+            <if test="remindType != null and remindType != ''">
+                AND per.remind_type = #{remindType}
+            </if>
+            <if test="status != null">
+                AND per.status = #{status}
+            </if>
+            <!-- 下次执行时间范围查询 -->
+            <if test="startTime != null">
+                AND per.next_trigger_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND per.next_trigger_time &lt;= #{endTime}
+            </if>
+            <!-- 预约时间筛选 -->
+            <if test="appointmentTime != null">
+                AND pe.appointment_time = #{appointmentTime}
+            </if>
+            <!-- 预约内容模糊查询 -->
+            <if test="eventContent != null and eventContent != ''">
+                AND pe.event_content LIKE CONCAT('%', #{eventContent}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+        <!-- 默认按下次执行时间升序+创建时间降序 -->
+        <if test="custom_order_by == null or custom_order_by == ''">
+            ORDER BY per.next_trigger_time ASC, per.create_time DESC
+        </if>
+    </select>
+
+    <!-- 按下次执行时间查询待触发的提醒规则 -->
+    <select id="selectWaitTriggerByTime" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM pet_event_reminder per
+        WHERE per.status = 1
+        AND per.next_trigger_time &lt;= #{triggerTime}
+        ORDER BY per.next_trigger_time ASC
+    </select>
+
+</mapper>

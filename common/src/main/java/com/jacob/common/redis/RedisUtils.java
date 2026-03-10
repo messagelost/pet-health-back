@@ -547,4 +547,109 @@ public class RedisUtils {
     public List<Object> getQueueList(String key) {
         return redisTemplate.opsForList().range(key, 0, -1);
     }
+
+    /**
+     * 向有序集合添加数据
+     * @param key 键
+     * @param value 值
+     * @param score 分数
+     * @return true 成功 false 失败
+     */
+    public boolean zAdd(String key, Object value, double score) {
+        try {
+            redisTemplate.opsForZSet().add(key, value, score);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 向有序集合添加数据并设置过期时间
+     * @param key 键
+     * @param value 值
+     * @param score 分数
+     * @param time 时间 (秒)
+     * @return true 成功 false 失败
+     */
+    public boolean zAdd(String key, Object value, double score, long time) {
+        try {
+            redisTemplate.opsForZSet().add(key, value, score);
+            if (time > 0) {
+                expire(key, time);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 根据分数范围获取有序集合中的数据
+     * @param key 键
+     * @param minScore 最小分数
+     * @param maxScore 最大分数
+     * @return 有序集合中的元素
+     */
+    public Set<Object> zRangeByScore(String key, double minScore, double maxScore) {
+        try {
+            return redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 根据分数范围获取有序集合中的数据（带偏移量和数量）
+     * @param key 键
+     * @param minScore 最小分数
+     * @param maxScore 最大分数
+     * @param offset 起始位置
+     * @param count 获取数量
+     * @return 有序集合中的元素
+     */
+    public Set<Object> zRangeByScore(String key, double minScore, double maxScore, long offset, long count) {
+        try {
+            return redisTemplate.opsForZSet().rangeByScore(key, minScore, maxScore, offset, count);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 移除有序集合中指定值的元素
+     * @param key 键
+     * @param values 要移除的值
+     * @return 移除的个数
+     */
+    public long zRemove(String key, Object... values) {
+        try {
+            Long count = redisTemplate.opsForZSet().remove(key, values);
+            return count;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
+     * 移除有序集合中指定分数范围的元素
+     * @param key 键
+     * @param minScore 最小分数
+     * @param maxScore 最大分数
+     * @return 移除的个数
+     */
+    public long zRemoveRangeByScore(String key, double minScore, double maxScore) {
+        try {
+            Long count = redisTemplate.opsForZSet().removeRangeByScore(key, minScore, maxScore);
+            return count;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }

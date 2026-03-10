@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -87,6 +88,9 @@ public class JwtUtil {
     }
 
     public String getCurrentUserId() {
+        if(request.getHeader("Authorization") == null){
+            throw new UnauthenticatedException();
+        }
         return getUserId(request.getHeader("Authorization").substring(7));
     }
 }

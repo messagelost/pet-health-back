@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +44,12 @@ public class SysUserInfoServiceImpl extends BaseServiceImpl<SysUserInfoDao,SysUs
         claims.put("userId", sysUserInfo.getUserId());
         claims.put("userName", userName);
         claims.put("password", password);
+        Thread syncThread = new Thread(() -> {
+            sysUserInfo.setLastLoginTime(LocalDateTime.now());
+            sysUserInfo.setLastLoginIp("");
+            updateWithBean(sysUserInfo);
+        });
+        syncThread.start();
         return jwtUtil.generateToken(claims);
     }
 }

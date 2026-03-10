@@ -18,4 +18,9 @@ public class PetSpeciesServiceImpl extends BaseServiceImpl<PetSpeciesDao, PetSpe
     public SqlDao getDao() {
         return petSpeciesDao;
     }
+
+    @Override
+    public PetSpecies getSpeciesByBreed(String breedId) {
+        return petSpeciesDao.getSpeciesByBreed(breedId);
+    }
 }

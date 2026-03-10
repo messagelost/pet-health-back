@@ -1,6 +1,7 @@
 package com.jacob.web.system;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.jacob.common.annotation.ApiPermission;
 import com.jacob.common.model.author.entity.SysMenu;
 import com.jacob.common.model.author.enums.MenuTypeEnum;
@@ -71,6 +72,15 @@ public class SysMenuController{
         menu.setUpdateTime(LocalDateTime.now());
         menu.setUpdateUserId(jwtUtil.getCurrentUserId());
         sysMenuService.updateWithBean(menu);
+        return ResponseVO.success();
+    }
+
+    @DeleteMapping("/{id}")
+    @ApiPermission(code = "system:sysMenu:delete", name = "删除菜单")
+    @RequiresPermissions("system:sysMenu:delete")
+    public ResponseVO<?> delete(@PathVariable("id") String menuId){
+        sysMenuService.deleteById(menuId);
+        sysMenuService.remove(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, menuId));
         return ResponseVO.success();
     }
 

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.user.SysUserScheduleDao">
+
+    <!-- 基础结果映射：对应SysUserSchedule实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.user.entity.SysUserSchedule">
+        <id property="scheduleId" column="schedule_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="petId" column="pet_id"/>
+        <result property="scheduleDate" column="schedule_date"/>
+        <result property="scheduleTime" column="schedule_time"/>
+        <result property="content" column="content"/>
+        <result property="scheduleType" column="schedule_type"/>
+        <result property="status" column="status"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+
+        <result property="petName" column="pet_name"/>
+    </resultMap>
+
+    <!-- 包含用户/宠物名称的结果映射 -->
+    <resultMap id="ScheduleWithNameResultMap" type="com.jacob.common.model.user.entity.SysUserSchedule" extends="BaseResultMap">
+        <result property="petName" column="pet_name"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        sus.schedule_id,
+        sus.user_id,
+        sus.pet_id,
+        sus.schedule_date,
+        sus.schedule_time,
+        sus.content,
+        sus.schedule_type,
+        sus.status,
+        sus.create_time,
+        sus.update_time,
+        sus.create_user_id,
+        sus.update_user_id
+    </sql>
+
+    <!-- 新增用户日程 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.user.entity.SysUserSchedule">
+        INSERT INTO sys_user_schedule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="scheduleId != null and scheduleId != ''">
+                schedule_id,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="petId != null and petId != ''">
+                pet_id,
+            </if>
+            <if test="scheduleDate != null">
+                schedule_date,
+            </if>
+            <if test="scheduleTime != null">
+                schedule_time,
+            </if>
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="scheduleType != null">
+                schedule_type,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="scheduleId != null and scheduleId != ''">
+                #{scheduleId},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="petId != null and petId != ''">
+                #{petId},
+            </if>
+            <if test="scheduleDate != null">
+                #{scheduleDate},
+            </if>
+            <if test="scheduleTime != null">
+                #{scheduleTime},
+            </if>
+            <if test="content != null and content != ''">
+                #{content},
+            </if>
+            <if test="scheduleType != null">
+                #{scheduleType},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新用户日程 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.user.entity.SysUserSchedule">
+        UPDATE sys_user_schedule
+        <set>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="petId != null and petId != ''">pet_id = #{petId},</if>
+            <if test="scheduleDate != null">schedule_date = #{scheduleDate},</if>
+            <if test="scheduleTime != null">schedule_time = #{scheduleTime},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="scheduleType != null">schedule_type = #{scheduleType},</if>
+            <if test="status != null">status = #{status},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE schedule_id = #{scheduleId}
+    </update>
+
+    <!-- 根据主键删除用户日程 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM sys_user_schedule WHERE schedule_id = #{scheduleId}
+    </delete>
+
+    <!-- 批量删除用户日程 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM sys_user_schedule
+        WHERE schedule_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计日程数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM sys_user_schedule
+        <where>
+            <if test="userId != null and userId != ''">
+                AND user_id = #{userId}
+            </if>
+            <if test="petId != null and petId != ''">
+                AND pet_id = #{petId}
+            </if>
+            <if test="scheduleDate != null">
+                AND schedule_date = #{scheduleDate}
+            </if>
+            <if test="scheduleType != null">
+                AND schedule_type = #{scheduleType}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <!-- 日期范围查询：开始日期 -->
+            <if test="startDate != null">
+                AND schedule_date >= #{startDate}
+            </if>
+            <!-- 日期范围查询：结束日期 -->
+            <if test="endDate != null">
+                AND schedule_date &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询用户日程列表 -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        p.pet_name
+        FROM sys_user_schedule sus
+        LEFT JOIN pet_info p ON sus.pet_id = p.pet_id
+        <where>
+            <if test="userId != null and userId != ''">
+                AND sus.user_id = #{userId}
+            </if>
+            <if test="petId != null and petId != ''">
+                AND sus.pet_id = #{petId}
+            </if>
+            <if test="scheduleDate != null">
+                AND sus.schedule_date = #{scheduleDate}
+            </if>
+            <if test="scheduleType != null">
+                AND sus.schedule_type = #{scheduleType}
+            </if>
+            <if test="status != null">
+                AND sus.status = #{status}
+            </if>
+            <!-- 日期范围查询：开始日期 -->
+            <if test="startDate != null">
+                AND sus.schedule_date >= #{startDate}
+            </if>
+            <!-- 日期范围查询：结束日期 -->
+            <if test="endDate != null">
+                AND sus.schedule_date &lt;= #{endDate}
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+        <!-- 默认按日期升序+时间升序 -->
+        <if test="custom_order_by == null or custom_order_by == ''">
+            ORDER BY sus.schedule_date ASC, sus.schedule_time ASC, create_time ASC
+        </if>
+    </select>
+
+    <!-- 查询用户日程列表 -->
+    <select id="selectListWithName" resultMap="ScheduleWithNameResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>,
+        su.user_name,
+        p.pet_name
+        FROM sys_user_schedule sus
+        LEFT JOIN sys_user su ON sus.user_id = su.user_id
+        LEFT JOIN pet_info p ON sus.pet_id = p.pet_id
+        <where>
+            <if test="userId != null and userId != ''">
+                AND sus.user_id = #{userId}
+            </if>
+            <if test="petId != null and petId != ''">
+                AND sus.pet_id = #{petId}
+            </if>
+            <if test="scheduleDate != null">
+                AND sus.schedule_date = #{scheduleDate}
+            </if>
+            <if test="scheduleType != null">
+                AND sus.schedule_type = #{scheduleType}
+            </if>
+            <if test="status != null">
+                AND sus.status = #{status}
+            </if>
+            <!-- 日期范围查询：开始日期 -->
+            <if test="startDate != null">
+                AND sus.schedule_date >= #{startDate}
+            </if>
+            <!-- 日期范围查询：结束日期 -->
+            <if test="endDate != null">
+                AND sus.schedule_date &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY sus.schedule_date ASC, sus.schedule_time ASC
+    </select>
+
+    <!-- 按用户+日期范围查询未完成日程 -->
+    <select id="selectUnfinishedByUserAndDate" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user_schedule sus
+        WHERE sus.user_id = #{userId}
+        AND sus.status = 0
+        AND sus.schedule_date >= #{startDate}
+        AND sus.schedule_date &lt;= #{endDate}
+        ORDER BY sus.schedule_date ASC, sus.schedule_time ASC
+    </select>
+
+</mapper>

@@ -37,7 +37,7 @@ public class SysRole extends BaseEntity {
      * 角色排序
      */
     @TableField
-    private String roleSort;
+    private Integer roleSort;
 
 
     @TableField(exist = false)

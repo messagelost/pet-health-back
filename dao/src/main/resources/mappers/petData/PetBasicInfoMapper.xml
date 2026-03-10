@@ -13,11 +13,15 @@
         <result property="neutered" column="neutered"/>
         <result property="pregnant" column="pregnant"/>
         <result property="lifeStage" column="life_stage"/>
+        <result property="petImgUrl" column="pet_img_url"/>
         <!-- 继承BaseEntity的公共字段 -->
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
+
+        <result property="breedName" column="breed_name"/>
+        <result property="speciesId" column="species_id"/>
     </resultMap>
 
     <!-- 基础字段列表：用于查询语句复用 -->
@@ -31,6 +35,7 @@
         pbi.neutered,
         pbi.pregnant,
         pbi.life_stage,
+        pbi.pet_img_url,
         pbi.create_time,
         pbi.update_time,
         pbi.create_user_id,
@@ -67,6 +72,9 @@
             </if>
             <if test="lifeStage != null and lifeStage != ''">
                 life_stage,
+            </if>
+            <if test="petImgUrl != null and petImgUrl != ''">
+                pet_img_url,
             </if>
             create_time,
             update_time,
@@ -106,6 +114,9 @@
             <if test="lifeStage != null and lifeStage != ''">
                 #{lifeStage},
             </if>
+            <if test="petImgUrl != null and petImgUrl != ''">
+                #{petImgUrl},
+            </if>
             NOW(),
             NOW(),
             <if test="createUserId != null and createUserId != ''">
@@ -129,6 +140,7 @@
             <if test="neutered != null">neutered = #{neutered},</if>
             <if test="pregnant != null">pregnant = #{pregnant},</if>
             <if test="lifeStage != null and lifeStage != ''">life_stage = #{lifeStage},</if>
+            <if test="petImgUrl != null and petImgUrl != ''">pet_img_url = #{petImgUrl},</if>
             update_time = NOW(),
             <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
         </set>
@@ -178,8 +190,9 @@
     <!-- 查询宠物基础信息列表（带条件） -->
     <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>,pb.breed_name AS breed_name,pb.species_id AS species_id
         FROM pet_basic_info pbi
+        LEFT JOIN pet_breed pb ON pbi.breed_id = pb.breed_id
         <where>
             <if test="breedId != null and breedId != ''">
                 AND pbi.breed_id = #{breedId}

@@ -8,9 +8,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
- * 宠物事件调度实体类
+ * 宠物预约实体类
  * 对应数据库表：pet_event
  * @author jacob
  */
@@ -22,75 +23,51 @@ public class PetEvent extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 主键
+     * 预约ID（主键）
      */
     @TableId
     private String eventId;
 
     /**
-     * 宠物ID（关联pet_basic_info表的pet_id）
+     * 用户ID（关联系统用户表）
+     */
+    @TableField
+    private String userId;
+
+    /**
+     * 宠物ID（关联宠物信息表）
      */
     @TableField
     private String petId;
 
     /**
-     * 事件类型（1=疫苗接种，2=驱虫，3=洗护，4=用药，5=体检，6=喂食提醒，7=其他）
+     * 事件类型
      */
     @TableField
     private Integer eventType;
 
     /**
-     * 事件名称
+     * 事件内容
      */
     @TableField
-    private String eventName;
+    private String eventContent;
 
     /**
-     * 下次应执行的日期
+     * 预约时间
      */
     @TableField
-    private LocalDate scheduleDate;
+    private LocalDateTime appointmentTime;
 
     /**
-     * 提前提醒天数
-     */
-    @TableField
-    private Integer remindBeforeDays;
-
-    /**
-     * 提醒状态（0=未提醒，1=已提醒，2=已完成，3=已取消）
+     * 预约状态（0=待提醒，1=已提醒，2=已取消）
      */
     @TableField
     private Integer status;
 
     /**
-     * 是否周期任务（0=否，1=是）
+     * 非数据库字段：宠物名称
      */
-    @TableField
-    private Integer isRepeat;
-
-    /**
-     * 频率
-     */
-    @TableField
-    private Integer frequency;
-
-    /**
-     * 周期结束时间
-     */
-    @TableField
-    private LocalDate endDate;
-
-    /**
-     * 最后执行时间
-     */
-    @TableField
-    private LocalDate lastExecuteDate;
-
-    /**
-     * 通知渠道ID
-     */
-    @TableField
-    private String channelId;
+    @TableField(exist = false)
+    private String petName;
 
 }

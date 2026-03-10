@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.system.NotifyTemplateDao">
+
+    <!-- 基础结果映射：对应NotifyTemplate实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.system.entity.NotifyTemplate">
+        <id property="templateId" column="template_id"/>
+        <result property="eventType" column="event_type"/>
+        <result property="channel" column="channel"/>
+        <result property="titleTemplate" column="title_template"/>
+        <result property="contentTemplate" column="content_template"/>
+        <result property="params" column="params"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        nt.template_id,
+        nt.event_type,
+        nt.channel,
+        nt.title_template,
+        nt.content_template,
+        nt.params,
+        nt.create_time,
+        nt.update_time,
+        nt.create_user_id,
+        nt.update_user_id
+    </sql>
+
+    <!-- 新增通知模板 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.system.entity.NotifyTemplate">
+        INSERT INTO notify_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null and templateId != ''">
+                template_id,
+            </if>
+            <if test="eventType != null">
+                event_type,
+            </if>
+            <if test="channel != null and channel != ''">
+                channel,
+            </if>
+            <if test="titleTemplate != null and titleTemplate != ''">
+                title_template,
+            </if>
+            <if test="contentTemplate != null and contentTemplate != ''">
+                content_template,
+            </if>
+            <if test="params != null and params != ''">
+                params,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateId != null and templateId != ''">
+                #{templateId},
+            </if>
+            <if test="eventType != null">
+                #{eventType},
+            </if>
+            <if test="channel != null and channel != ''">
+                #{channel},
+            </if>
+            <if test="titleTemplate != null and titleTemplate != ''">
+                #{titleTemplate},
+            </if>
+            <if test="contentTemplate != null and contentTemplate != ''">
+                #{contentTemplate},
+            </if>
+            <if test="params != null and params != ''">
+                #{params},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新通知模板 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.system.entity.NotifyTemplate">
+        UPDATE notify_template
+        <set>
+            <if test="eventType != null">event_type = #{eventType},</if>
+            <if test="channel != null and channel != ''">channel = #{channel},</if>
+            <if test="titleTemplate != null and titleTemplate != ''">title_template = #{titleTemplate},</if>
+            <if test="contentTemplate != null and contentTemplate != ''">content_template = #{contentTemplate},</if>
+            <if test="params != null and params != ''">params = #{params},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE template_id = #{templateId}
+    </update>
+
+    <!-- 根据主键删除通知模板 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM notify_template WHERE template_id = #{templateId}
+    </delete>
+
+    <!-- 批量删除通知模板 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM notify_template
+        WHERE template_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计通知模板数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM notify_template nt
+        <where>
+            <if test="templateId != null and templateId != ''">
+                AND nt.template_id = #{templateId}
+            </if>
+            <if test="eventType != null">
+                AND nt.event_type = #{eventType}
+            </if>
+            <if test="channel != null and channel != ''">
+                AND nt.channel = #{channel}
+            </if>
+            <!-- 标题模板模糊查询 -->
+            <if test="titleTemplate != null and titleTemplate != ''">
+                AND nt.title_template LIKE CONCAT('%', #{titleTemplate}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询通知模板列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM notify_template nt
+        <where>
+            <if test="templateId != null and templateId != ''">
+                AND nt.template_id = #{templateId}
+            </if>
+            <if test="eventType != null">
+                AND nt.event_type = #{eventType}
+            </if>
+            <if test="channel != null and channel != ''">
+                AND nt.channel = #{channel}
+            </if>
+            <!-- 标题模板模糊查询 -->
+            <if test="titleTemplate != null and titleTemplate != ''">
+                AND nt.title_template LIKE CONCAT('%', #{titleTemplate}, '%')
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+        <!-- 默认按创建时间降序 -->
+        <if test="custom_order_by == null or custom_order_by == ''">
+            ORDER BY nt.create_time DESC
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jacob.dao.mappers.system.NotifyLogDao">
+
+    <!-- 基础结果映射：对应NotifyLog实体类所有字段 -->
+    <resultMap id="BaseResultMap" type="com.jacob.common.model.system.entity.NotifyLog">
+        <id property="logId" column="log_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="appointmentId" column="appointment_id"/>
+        <result property="channel" column="channel"/>
+        <result property="content" column="content"/>
+        <result property="sendStatus" column="send_status"/>
+        <result property="sendTime" column="send_time"/>
+        <!-- 继承BaseEntity的公共字段 -->
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="updateUserId" column="update_user_id"/>
+    </resultMap>
+
+    <!-- 基础字段列表：用于查询语句复用 -->
+    <sql id="Base_Column_List">
+        nl.log_id,
+        nl.user_id,
+        nl.appointment_id,
+        nl.channel,
+        nl.content,
+        nl.send_status,
+        nl.send_time,
+        nl.create_time,
+        nl.update_time,
+        nl.create_user_id,
+        nl.update_user_id
+    </sql>
+
+    <!-- 新增通知日志 -->
+    <insert id="insertWithBean" parameterType="com.jacob.common.model.system.entity.NotifyLog">
+        INSERT INTO notify_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null and logId != ''">
+                log_id,
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id,
+            </if>
+            <if test="appointmentId != null and appointmentId != ''">
+                appointment_id,
+            </if>
+            <if test="channel != null and channel != ''">
+                channel,
+            </if>
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="sendStatus != null">
+                send_status,
+            </if>
+            <if test="sendTime != null">
+                send_time,
+            </if>
+            create_time,
+            update_time,
+            <if test="createUserId != null and createUserId != ''">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                update_user_id,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null and logId != ''">
+                #{logId},
+            </if>
+            <if test="userId != null and userId != ''">
+                #{userId},
+            </if>
+            <if test="appointmentId != null and appointmentId != ''">
+                #{appointmentId},
+            </if>
+            <if test="channel != null and channel != ''">
+                #{channel},
+            </if>
+            <if test="content != null and content != ''">
+                #{content},
+            </if>
+            <if test="sendStatus != null">
+                #{sendStatus},
+            </if>
+            <if test="sendTime != null">
+                #{sendTime},
+            </if>
+            NOW(),
+            NOW(),
+            <if test="createUserId != null and createUserId != ''">
+                #{createUserId},
+            </if>
+            <if test="updateUserId != null and updateUserId != ''">
+                #{updateUserId},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 更新通知日志 -->
+    <update id="updateWithBean" parameterType="com.jacob.common.model.system.entity.NotifyLog">
+        UPDATE notify_log
+        <set>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="appointmentId != null and appointmentId != ''">appointment_id = #{appointmentId},</if>
+            <if test="channel != null and channel != ''">channel = #{channel},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="sendStatus != null">send_status = #{sendStatus},</if>
+            <if test="sendTime != null">send_time = #{sendTime},</if>
+            update_time = NOW(),
+            <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
+        </set>
+        WHERE log_id = #{logId}
+    </update>
+
+    <!-- 根据主键删除通知日志 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        DELETE FROM notify_log WHERE log_id = #{logId}
+    </delete>
+
+    <!-- 批量删除通知日志 -->
+    <delete id="deleteBatchByPrimaryKeys" parameterType="java.lang.String">
+        DELETE FROM notify_log
+        WHERE log_id IN
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 统计通知日志数量（带条件） -->
+    <select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+        SELECT COUNT(1)
+        FROM notify_log nl
+        <where>
+            <if test="logId != null and logId != ''">
+                AND nl.log_id = #{logId}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND nl.user_id = #{userId}
+            </if>
+            <if test="appointmentId != null and appointmentId != ''">
+                AND nl.appointment_id = #{appointmentId}
+            </if>
+            <if test="channel != null and channel != ''">
+                AND nl.channel = #{channel}
+            </if>
+            <if test="sendStatus != null">
+                AND nl.send_status = #{sendStatus}
+            </if>
+            <!-- 发送时间范围查询 -->
+            <if test="startTime != null">
+                AND nl.send_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND nl.send_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!-- 查询通知日志列表（带条件） -->
+    <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM notify_log nl
+        <where>
+            <if test="logId != null and logId != ''">
+                AND nl.log_id = #{logId}
+            </if>
+            <if test="userId != null and userId != ''">
+                AND nl.user_id = #{userId}
+            </if>
+            <if test="appointmentId != null and appointmentId != ''">
+                AND nl.appointment_id = #{appointmentId}
+            </if>
+            <if test="channel != null and channel != ''">
+                AND nl.channel = #{channel}
+            </if>
+            <if test="sendStatus != null">
+                AND nl.send_status = #{sendStatus}
+            </if>
+            <!-- 发送时间范围查询 -->
+            <if test="startTime != null">
+                AND nl.send_time >= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND nl.send_time &lt;= #{endTime}
+            </if>
+        </where>
+        <if test="custom_order_by != null and custom_order_by != ''">
+            ORDER BY ${custom_order_by}
+        </if>
+        <!-- 默认按发送时间降序（最新发送的在前） -->
+        <if test="custom_order_by == null or custom_order_by == ''">
+            ORDER BY nl.send_time DESC, nl.create_time DESC
+        </if>
+    </select>
+
+</mapper>
