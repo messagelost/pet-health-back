@@ -1,6 +1,7 @@
 package com.jacob.web.system;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.jacob.common.annotation.ApiPermission;
 import com.jacob.common.model.author.entity.SysRole;
 import com.jacob.common.model.author.entity.SysUserRole;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +64,31 @@ public class SysUserController {
         sysUserInfo.setUpdateUserId(jwtUtil.getCurrentUserId());
         sysUserInfo.setUpdateTime(now);
         sysUserInfoService.updateWithBean(sysUserInfo);
+
+        List<String> sysUserRoles = new ArrayList<>(sysUserRoleService.listUserRoles(userId).stream().map(SysUserRole::getRoleId).toList());
+        sysUserInfo.getRoleIdList().forEach(roleId -> {
+            if(!sysUserRoles.contains(roleId)){
+                SysUserRole ur = new SysUserRole();
+                ur.setUserRoleId(customSnowflakeIdGenerator.generateIdWithPrefix("UR"));
+                ur.setUserId(userId);
+                ur.setRoleId(roleId);
+                ur.setCreateTime(now);
+                ur.setUpdateTime(now);
+                ur.setCreateUserId(jwtUtil.getCurrentUserId());
+                ur.setUpdateUserId(jwtUtil.getCurrentUserId());
+                sysUserRoleService.save(ur);
+            }
+
+            sysUserRoles.remove(roleId);
+        });
+
+        if(!sysUserRoles.isEmpty()){
+            sysUserRoleService.remove(
+                    new LambdaQueryWrapper<SysUserRole>()
+                            .in(SysUserRole::getRoleId, sysUserRoles)
+                            .eq(SysUserRole::getUserId, userId)
+            );
+        }
 
         return ResponseVO.success();
     }

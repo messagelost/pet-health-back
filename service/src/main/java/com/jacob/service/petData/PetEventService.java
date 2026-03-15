@@ -17,7 +17,7 @@ public interface PetEventService extends BaseService<PetEvent> {
      * 新增宠物预约
      * @param eventDto 宠物预约DTO
      */
-    void addEvent(PetEventDto eventDto);
+    PetEvent addEvent(PetEventDto eventDto);
 
     /**
      * 修改宠物预约

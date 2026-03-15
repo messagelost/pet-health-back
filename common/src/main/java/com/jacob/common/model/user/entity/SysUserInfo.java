@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -102,4 +103,6 @@ public class SysUserInfo extends BaseEntity {
     @TableField(exist = false)
     private String newAccount;
 
+    @TableField(exist = false)
+    private List<String> roleIdList;
 }

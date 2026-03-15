@@ -1,6 +1,8 @@
 package com.jacob.common.model.petData.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +27,8 @@ public class PetEventDto {
     /**
      * 预约时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime appointmentTime;
 
     /**
@@ -36,4 +40,9 @@ public class PetEventDto {
      * Cron表达式
      */
     private String cronExpr;
+
+    /**
+     * 事件id
+     */
+    private String eventId;
 }

@@ -24,6 +24,8 @@
     <resultMap id="JoinResultMap" type="com.jacob.common.model.petData.entity.PetEventReminder" extends="BaseResultMap">
         <result property="eventContent" column="event_content"/>
         <result property="appointmentTime" column="appointment_time"/>
+        <result property="eventType" column="event_type"/>
+        <result property="petId" column="pet_id"/>
     </resultMap>
 
     <!-- 基础字段列表（仅提醒规则表） -->
@@ -48,6 +50,8 @@
         <include refid="Base_Column_List"/>,
         pe.event_content,
         pe.appointment_time,
+        pe.event_type,
+        pe.pet_id
     </sql>
 
     <!-- 新增提醒规则 -->

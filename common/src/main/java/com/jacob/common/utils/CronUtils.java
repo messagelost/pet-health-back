@@ -20,8 +20,9 @@ public class CronUtils {
 
         CronExpression exp = CronExpression.parse(cron);
 
-        return LocalDateTime.from(Objects.requireNonNull(exp.next(
-                ZonedDateTime.now())).toInstant());
+        ZonedDateTime nextTime = Objects.requireNonNull(exp.next(ZonedDateTime.now()));
+
+        return nextTime.toLocalDateTime();
 
     }
 }

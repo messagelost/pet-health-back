@@ -22,6 +22,7 @@
 
         <result property="breedName" column="breed_name"/>
         <result property="speciesId" column="species_id"/>
+        <result property="lifeStageName" column="life_stage_name"/>
     </resultMap>
 
     <!-- 基础字段列表：用于查询语句复用 -->
@@ -191,8 +192,14 @@
     <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
         <include refid="Base_Column_List"/>,pb.breed_name AS breed_name,pb.species_id AS species_id
+        <if test="joinLifeStage != null and joinLifeStage != ''">
+            ,pl.stage_name AS life_stage_name
+        </if>
         FROM pet_basic_info pbi
         LEFT JOIN pet_breed pb ON pbi.breed_id = pb.breed_id
+        <if test="joinLifeStage != null and joinLifeStage != ''">
+            LEFT JOIN pet_life_stage pl ON pbi.life_stage = pl.stage_id
+        </if>
         <where>
             <if test="breedId != null and breedId != ''">
                 AND pbi.breed_id = #{breedId}

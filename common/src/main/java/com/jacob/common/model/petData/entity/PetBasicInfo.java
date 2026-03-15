@@ -87,6 +87,12 @@ public class PetBasicInfo extends BaseEntity {
     private String lifeStage;
 
     /**
+     * 生命阶段名称
+     */
+    @TableField(exist = false)
+    private String lifeStageName;
+
+    /**
      * 宠物照片
      */
     @TableField

@@ -184,7 +184,7 @@
         <include refid="Base_Column_List"/>,
         p.pet_name
         FROM sys_user_schedule sus
-        LEFT JOIN pet_info p ON sus.pet_id = p.pet_id
+        LEFT JOIN pet_basic_info p ON sus.pet_id = p.pet_id
         <where>
             <if test="userId != null and userId != ''">
                 AND sus.user_id = #{userId}
@@ -227,7 +227,7 @@
         p.pet_name
         FROM sys_user_schedule sus
         LEFT JOIN sys_user su ON sus.user_id = su.user_id
-        LEFT JOIN pet_info p ON sus.pet_id = p.pet_id
+        LEFT JOIN pet_basic_info p ON sus.pet_id = p.pet_id
         <where>
             <if test="userId != null and userId != ''">
                 AND sus.user_id = #{userId}

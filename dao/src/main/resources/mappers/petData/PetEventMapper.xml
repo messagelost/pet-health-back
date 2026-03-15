@@ -171,7 +171,7 @@
         <include refid="Base_Column_List"/>,
         p.pet_name
         FROM pet_event pe
-        LEFT JOIN pet_info p ON pe.pet_id = p.pet_id
+        LEFT JOIN pet_basic_info p ON pe.pet_id = p.pet_id
         <where>
             <if test="userId != null and userId != ''">
                 AND pe.user_id = #{userId}

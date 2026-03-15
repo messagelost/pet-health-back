@@ -11,7 +11,7 @@ public enum EventTypeEnum {
     MEDICATION(4, "用药"),
     EXAMINATION(5, "体检"),
     FEEDING(6, "喂食"),
-    OTHER(7, "其他");
+    OTHER(7, "运动");
 
     private final Integer code;
     private final String name;
