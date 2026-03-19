@@ -195,8 +195,14 @@
         <if test="joinLifeStage != null and joinLifeStage != ''">
             ,pl.stage_name AS life_stage_name
         </if>
+        <if test="joinSpecies != null and joinSpecies != ''">
+            ,ps.species_id AS species_id
+        </if>
         FROM pet_basic_info pbi
         LEFT JOIN pet_breed pb ON pbi.breed_id = pb.breed_id
+        <if test="joinSpecies != null and joinSpecies != ''">
+            LEFT JOIN pet_species ps ON pb.species_id = ps.species_id
+        </if>
         <if test="joinLifeStage != null and joinLifeStage != ''">
             LEFT JOIN pet_life_stage pl ON pbi.life_stage = pl.stage_id
         </if>

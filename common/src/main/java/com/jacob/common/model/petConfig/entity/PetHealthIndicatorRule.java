@@ -60,7 +60,7 @@ public class PetHealthIndicatorRule extends BaseEntity {
     /**
      * 生命周期阶段
      */
-    @TableField
+    @TableField(exist = false)
     private String lifeStageName;
 
     /**

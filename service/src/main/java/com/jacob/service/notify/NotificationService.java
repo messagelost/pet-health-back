@@ -2,6 +2,8 @@ package com.jacob.service.notify;
 
 import com.jacob.common.model.petData.entity.PetEventReminder;
 import com.jacob.common.model.petData.enums.ChannelType;
+import com.jacob.common.redis.RedisConstant;
+import com.jacob.common.redis.RedisUtils;
 import com.jacob.service.notify.sender.EmailSender;
 import com.jacob.service.notify.sender.SiteSender;
 import com.jacob.service.notify.sender.SmsSender;
@@ -20,6 +22,8 @@ public class NotificationService {
     private SiteSender siteSender;
     @Autowired
     private SmsSender smsSender;
+    @Autowired
+    private RedisUtils redisUtils;
 
     public void send(PetEventReminder reminder) {
         switch (reminder.getChannel()) {
@@ -34,4 +38,5 @@ public class NotificationService {
                 break;
         }
     }
+
 }

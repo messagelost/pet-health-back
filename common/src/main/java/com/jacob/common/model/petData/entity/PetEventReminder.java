@@ -99,4 +99,16 @@ public class PetEventReminder extends BaseEntity {
     @TableField(exist = false)
     private String petId;
 
+    @TableField(exist = false)
+    private String petName;
+
+    @TableField(exist = false)
+    private String userName;
+
+    @TableField(exist = false)
+    private String title;
+
+    @TableField(exist = false)
+    private String content;
+
 }

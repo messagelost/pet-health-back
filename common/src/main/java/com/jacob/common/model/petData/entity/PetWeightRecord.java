@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 宠物体重记录实体类
@@ -44,4 +45,23 @@ public class PetWeightRecord extends BaseEntity {
      */
     @TableField
     private String lifeStage;
+
+    @TableField(exist = false)
+    private List<String> petIds;
+
+    @TableField(exist = false)
+    private String minValue;
+
+    @TableField(exist = false)
+    private String maxValue;
+
+    @TableField(exist = false)
+    private String unit;
+
+    @TableField(exist = false)
+    private String belowRemark;
+
+    @TableField(exist = false)
+    private String aboveRemark;
+
 }

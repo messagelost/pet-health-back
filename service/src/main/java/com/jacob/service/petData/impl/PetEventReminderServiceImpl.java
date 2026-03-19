@@ -1,5 +1,6 @@
 package com.jacob.service.petData.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.jacob.common.model.petData.dto.PetEventDto;
 import com.jacob.common.model.petData.entity.PetEvent;
@@ -57,8 +58,18 @@ public class PetEventReminderServiceImpl extends BaseServiceImpl<PetEventReminde
 
     @Override
     public void process(String reminderId) {
-        PetEventReminder reminder = getById(reminderId);
+        PetEventReminder reminder = findBeanById(reminderId);
         PetEvent event = petEventService.getById(reminder.getEventId());
+        NotifyTemplate template = notifyTemplateService.getByEventTypeInCache(event.getEventType());
+        String title = template.getTitleTemplate();
+        String content = template.getContentTemplate()
+                .replace("{petName}", reminder.getPetName())
+                .replace("{eventContent}", event.getEventContent())
+                .replace("{appointmentTime}", DateUtil.format(event.getAppointmentTime(), "yyyy-MM-dd HH:mm").split(" ")[1]);
+
+        reminder.setTitle(title);
+        reminder.setContent(content);
+
         notificationService.send(reminder);
         if(ReminderTypeEnum.REPEAT.getCode().equals(reminder.getRemindType())){
             LocalDateTime next = CronUtils.next(reminder.getCronExpr());

@@ -13,6 +13,12 @@
         <result property="updateTime" column="update_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
+
+        <result property="minValue" column="min_value"/>
+        <result property="maxValue" column="max_value"/>
+        <result property="unit" column="unit"/>
+        <result property="belowRemark" column="below_remark"/>
+        <result property="aboveRemark" column="above_remark"/>
     </resultMap>
 
     <!-- 基础字段列表：用于查询语句复用 -->
@@ -127,8 +133,16 @@
     <!-- 查询体重记录列表（带条件） -->
     <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List"/>,
+            phir.min_value as min_value,
+            phir.max_value as max_value,
+            phir.unit as unit,
+            phir.below_remark as below_remark,
+            phir.above_remark as above_remark
         FROM pet_weight_record pwr
+        LEFT JOIN pet_basic_info pbi ON pbi.pet_id = pwr.pet_id
+        LEFT JOIN pet_health_indicator_rule phir
+            ON phir.breed_id = pbi.breed_id AND phir.life_stage = pwr.life_stage AND phir.indicator_name = '体重'
         <where>
             <if test="petId != null and petId != ''">
                 AND pwr.pet_id = #{petId}
@@ -141,6 +155,12 @@
             </if>
             <if test="maxWeight != null">
                 AND pwr.weight &lt;= #{maxWeight}
+            </if>
+            <if test="petIds != null">
+                AND pwr.pet_id IN
+                <foreach item="id" collection="petIds" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
         </where>
         <if test="custom_order_by != null and custom_order_by != ''">

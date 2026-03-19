@@ -140,6 +140,40 @@ public class RedisUtils {
     }
 
     /**
+     * 普通缓存放入，仅当 key 不存在时成功
+     * @param key 键
+     * @param value 值
+     * @return true 成功（key 不存在） false 失败（key 已存在）
+     */
+    public boolean setIfAbsent(String key, Object value) {
+        try {
+            return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, value));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * 普通缓存放入并设置时间，仅当 key 不存在时成功
+     * @param key 键
+     * @param value 值
+     * @param time 时间 (秒) time 要大于 0
+     * @return true 成功（key 不存在） false 失败（key 已存在或 time<=0）
+     */
+    public boolean setIfAbsent(String key, Object value, long time) {
+        try {
+            if (time > 0) {
+                return Boolean.TRUE.equals(redisTemplate.opsForValue().setIfAbsent(key, value, time, TimeUnit.SECONDS));
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * 递增
      * @param key 键
      * @param delta 要增加几(大于0)

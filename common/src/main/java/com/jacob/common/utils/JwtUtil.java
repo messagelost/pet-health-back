@@ -93,4 +93,12 @@ public class JwtUtil {
         }
         return getUserId(request.getHeader("Authorization").substring(7));
     }
+
+    public String getCurrentUserNickName() {
+        if(request.getHeader("Authorization") == null){
+            throw new UnauthenticatedException();
+        }
+
+        return parseToken(request.getHeader("Authorization").substring(7)).get("nickName", String.class);
+    }
 }

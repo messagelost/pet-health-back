@@ -26,6 +26,7 @@
         <result property="appointmentTime" column="appointment_time"/>
         <result property="eventType" column="event_type"/>
         <result property="petId" column="pet_id"/>
+        <result property="petName" column="pet_name"/>
     </resultMap>
 
     <!-- 基础字段列表（仅提醒规则表） -->
@@ -200,6 +201,15 @@
                 AND pe.appointment_time = #{appointmentTime}
             </if>
         </where>
+    </select>
+
+    <select id="selectOneById" resultMap="JoinResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Join_Column_List"/>,pbi.pet_name as pet_name
+        FROM pet_event_reminder per
+        LEFT JOIN pet_event pe ON per.event_id = pe.event_id
+        LEFT JOIN pet_basic_info pbi ON pe.pet_id = pbi.pet_id
+        WHERE per.reminder_id = #{reminderId}
     </select>
 
     <!-- 查询提醒规则列表 -->
