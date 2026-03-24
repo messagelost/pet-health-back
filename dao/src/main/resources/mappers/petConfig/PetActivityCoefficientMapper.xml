@@ -8,7 +8,8 @@
         <result property="breedIds" column="breed_ids"/>
         <result property="calculatePriority" column="calculate_priority"/>
         <result property="value" column="value"/>
-        <result property="caseDesc" column="case"/> <!-- 映射关键字字段case到caseDesc -->
+        <result property="caseDesc" column="case_desc"/>
+        <result property="caseSql" column="case_sql"/>
         <!-- 继承BaseEntity的公共字段 -->
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
@@ -22,7 +23,8 @@
         pac.breed_ids,
         pac.calculate_priority,
         pac.value,
-        pac.case,
+        pac.case_desc,
+        pac.case_sql,
         pac.create_time,
         pac.update_time,
         pac.create_user_id,
@@ -46,7 +48,10 @@
                 value,
             </if>
             <if test="caseDesc != null and caseDesc != ''">
-                `case`, <!-- 关键字字段加反引号转义 -->
+                case_desc,
+            </if>
+            <if test="caseSql != null and caseSql != ''">
+                case_sql,
             </if>
             create_time,
             update_time,
@@ -74,6 +79,9 @@
             <if test="caseDesc != null and caseDesc != ''">
                 #{caseDesc},
             </if>
+            <if test="caseSql != null and caseSql != ''">
+                #{caseSql},
+            </if>
             NOW(),
             NOW(),
             <if test="createUserId != null and createUserId != ''">
@@ -92,7 +100,8 @@
             <if test="breedIds != null and breedIds != ''">breed_ids = #{breedIds},</if>
             <if test="calculatePriority != null">calculate_priority = #{calculatePriority},</if>
             <if test="value != null">value = #{value},</if>
-            <if test="caseDesc != null and caseDesc != ''">`case` = #{caseDesc},</if> <!-- 关键字字段加反引号转义 -->
+            <if test="caseDesc != null and caseDesc != ''">case_desc = #{caseDesc},</if>
+            <if test="caseSql != null and caseSql != ''">case_sql = #{caseSql},</if>
             update_time = NOW(),
             <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
         </set>
@@ -122,7 +131,7 @@
                 AND FIND_IN_SET(#{breedId}, breed_ids)
             </if>
             <if test="caseDesc != null and caseDesc != ''">
-                AND `case` LIKE CONCAT('%', #{caseDesc}, '%') <!-- 关键字字段加反引号转义 -->
+                AND case_desc LIKE CONCAT('%', #{caseDesc}, '%') <!-- 关键字字段加反引号转义 -->
             </if>
         </where>
     </select>
@@ -137,7 +146,7 @@
                 AND FIND_IN_SET(#{breedId}, pac.breed_ids)
             </if>
             <if test="caseDesc != null and caseDesc != ''">
-                AND pac.`case` LIKE CONCAT('%', #{caseDesc}, '%') <!-- 关键字字段加反引号转义 -->
+                AND pac.case_desc LIKE CONCAT('%', #{caseDesc}, '%') <!-- 关键字字段加反引号转义 -->
             </if>
         </where>
         <if test="custom_order_by != null and custom_order_by != ''">

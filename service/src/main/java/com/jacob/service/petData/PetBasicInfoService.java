@@ -6,6 +6,7 @@ import com.jacob.common.model.petConfig.entity.VaccineInfo;
 import com.jacob.common.model.petData.entity.PetBasicInfo;
 import com.jacob.common.model.petData.vo.PetBasicInfoVo;
 import com.jacob.service.base.BaseService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -49,4 +50,11 @@ public interface PetBasicInfoService extends BaseService<PetBasicInfo> {
      * @return  基础信息VO
      */
     PetBasicInfoVo getBasicInfo();
+
+    /**
+     * 根据用户ID更新宠物信息
+     * @param userId 用户ID
+     */
+    @Transactional(rollbackFor = Exception.class)
+    void updatePetByUserId(String userId);
 }

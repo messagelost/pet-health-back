@@ -6,7 +6,6 @@ import com.jacob.common.model.base.PageQuery;
 import com.jacob.common.model.base.PageResult;
 import com.jacob.common.model.petConfig.entity.PetLifeStage;
 import com.jacob.common.model.petConfig.entity.PetSpecies;
-import com.jacob.common.model.petConfig.entity.VaccineInfo;
 import com.jacob.common.model.petData.entity.PetBasicInfo;
 import com.jacob.common.model.petData.entity.PetWeightRecord;
 import com.jacob.common.model.petData.vo.PetBasicInfoVo;
@@ -21,6 +20,7 @@ import com.jacob.service.petData.PetBasicInfoService;
 import com.jacob.service.petData.PetWeightRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -129,6 +129,8 @@ public class PetBasicInfoServiceImpl extends BaseServiceImpl<PetBasicInfoDao, Pe
         // 当前用户
         petBasicInfo.setUserId(jwtUtil.getCurrentUserId());
         Map<String, Object> params = new HashMap<>(BeanUtil.beanToMap(petBasicInfo));
+        params.put("joinLifeStage", "joinLifeStage");
+        params.put("joinSpecies", "joinSpecies");
         return selectAllList( params );
     }
 
@@ -196,5 +198,15 @@ public class PetBasicInfoServiceImpl extends BaseServiceImpl<PetBasicInfoDao, Pe
         petBasicInfo = calcLifeStage(petBasicInfo);
 
         updateWithBean(petBasicInfo);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updatePetByUserId(String userId){
+        List<PetBasicInfo> list = list(new LambdaQueryWrapper<PetBasicInfo>().eq(PetBasicInfo::getUserId, userId));
+        list.forEach(pet -> {
+            pet = calcLifeStage(pet);
+        });
+        saveOrUpdateBatch(list);
     }
 }

@@ -3,11 +3,14 @@ package com.jacob.common.model.petConfig.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jacob.common.model.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -74,13 +77,19 @@ public class VaccineInfo extends BaseEntity {
      * 接种总次数
      */
     @TableField
-    private String injectionTimes;
+    private Integer injectionTimes;
 
     /**
      * 每一剂间隔天数
      */
     @TableField
     private Integer intervalDays;
+
+    /**
+     * 加强免疫间隔天数
+     */
+    @TableField
+    private Integer enhanceDays;
 
     /**
      * 适用宠物品种
@@ -99,5 +108,18 @@ public class VaccineInfo extends BaseEntity {
      */
     @TableField(exist = false)
     private String vaccineNameSearch;
+
+    @TableField(exist = false)
+    private String suggestType;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @TableField(exist = false)
+    private LocalDateTime nextInjectionDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @TableField(exist = false)
+    private LocalDateTime lastInjectionDate;
 
 }

@@ -8,9 +8,13 @@ import com.jacob.dao.mappers.petData.PetWeightRecordDao;
 import com.jacob.service.base.impl.BaseServiceImpl;
 import com.jacob.service.petData.PetBasicInfoService;
 import com.jacob.service.petData.PetWeightRecordService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
+@Slf4j
 @Service
 public class PetWeightRecordServiceImpl extends BaseServiceImpl<PetWeightRecordDao, PetWeightRecord> implements PetWeightRecordService {
 
@@ -20,5 +24,19 @@ public class PetWeightRecordServiceImpl extends BaseServiceImpl<PetWeightRecordD
     @Override
     public SqlDao getDao() {
         return petWeightRecordDao;
+    }
+
+    @Override
+    public BigDecimal getDer(String petId, BigDecimal coefficient) {
+        PetWeightRecord last = petWeightRecordDao.selectLatestByPetId(petId);
+        if(last != null){
+            BigDecimal weight = last.getWeight();
+            BigDecimal rer = BigDecimal.valueOf(70).multiply(
+                    BigDecimal.valueOf(Math.pow(weight.doubleValue(), 0.75))
+            );
+            log.info("宠物{}的DER{}", petId, rer.multiply(coefficient));
+            return rer.multiply(coefficient);
+        }
+        return BigDecimal.ZERO;
     }
 }

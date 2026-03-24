@@ -20,6 +20,10 @@
         <result property="updateTime" column="update_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
+
+        <result property="petName" column="pet_name"/>
+        <result property="breedName" column="breed_name"/>
+        <result property="vaccineName" column="vaccine_name"/>
     </resultMap>
 
     <!-- 基础字段列表：用于查询语句复用 -->
@@ -197,7 +201,25 @@
     <select id="selectAllList" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
         <include refid="Base_Column_List"/>
+        <if test="joinPet != null">
+            ,pbi.pet_name AS pet_name
+        </if>
+        <if test="joinBreed">
+            ,pb.breed_name AS breed_name
+        </if>
+        <if test="joinVaccine">
+            ,vi.vaccine_name AS vaccine_name
+        </if>
         FROM pet_vaccine_record pvr
+        <if test="joinPet != null">
+            LEFT JOIN pet_basic_info pbi ON pbi.pet_id = pvr.pet_id
+        </if>
+        <if test="joinBreed">
+            LEFT JOIN pet_breed pb ON pb.breed_id = pvr.breed_id
+        </if>
+        <if test="joinVaccine">
+            LEFT JOIN vaccine_info vi ON vi.vaccine_id = pvr.vaccine_id
+        </if>
         <where>
             <if test="petId != null and petId != ''">
                 AND pvr.pet_id = #{petId}
@@ -216,6 +238,12 @@
             </if>
             <if test="hospitalName != null and hospitalName != ''">
                 AND pvr.hospital_name LIKE CONCAT('%', #{hospitalName}, '%')
+            </if>
+            <if test="petIds != null">
+                AND pvr.pet_id IN
+                <foreach item="id" collection="petIds" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
             </if>
         </where>
         <if test="custom_order_by != null and custom_order_by != ''">

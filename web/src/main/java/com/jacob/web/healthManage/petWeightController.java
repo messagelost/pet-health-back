@@ -57,14 +57,8 @@ public class petWeightController {
     @ApiPermission(code = "health:petWeight:list", name = "查询体重记录")
     public ResponseVO<PetWeightVo> list(){
         PetWeightVo vo = new PetWeightVo();
-        String userId = jwtUtil.getCurrentUserId();
 
-        PetBasicInfo pet = new PetBasicInfo();
-        pet.setUserId(userId);
-        Map<String, Object> params = BeanUtil.beanToMap(pet);
-        params.put("joinLifeStage", "joinLifeStage");
-        params.put("joinSpecies", "joinSpecies");
-        List<PetBasicInfo> petList = petBasicInfoService.selectAllList(params);
+        List<PetBasicInfo> petList = petBasicInfoService.getMyPetList(new PetBasicInfo());
         vo.setPetList(petList);
 
         List<String> petIds = petList.stream().map(PetBasicInfo::getPetId).toList();

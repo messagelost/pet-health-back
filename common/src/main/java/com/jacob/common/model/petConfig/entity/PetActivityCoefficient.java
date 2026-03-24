@@ -47,6 +47,12 @@ public class PetActivityCoefficient extends BaseEntity {
     private BigDecimal value;
 
     /**
+     * 适用情况
+     */
+    @TableField
+    private String caseSql;
+
+    /**
      * 适用情况描述
      */
     @TableField

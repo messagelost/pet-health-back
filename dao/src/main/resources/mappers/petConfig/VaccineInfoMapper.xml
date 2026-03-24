@@ -14,11 +14,16 @@
         <result property="periodUnit" column="period_unit"/>
         <result property="injectionTimes" column="injection_times"/>
         <result property="intervalDays" column="interval_days"/>
+        <result property="enhanceDays" column="enhance_days"/>
         <!-- 继承BaseEntity的公共字段 -->
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="createUserId" column="create_user_id"/>
         <result property="updateUserId" column="update_user_id"/>
+
+        <result property="suggestType" column="suggest_type"/>
+        <result property="nextInjectionDate" column="next_injection_date"/>
+        <result property="lastInjectionDate" column="last_injection_date"/>
     </resultMap>
 
     <!-- 基础字段列表：用于查询语句复用 -->
@@ -33,6 +38,7 @@
         vi.period_unit,
         vi.injection_times,
         vi.interval_days,
+        vi.enhance_days,
         vi.create_time,
         vi.update_time,
         vi.create_user_id,
@@ -72,6 +78,9 @@
             </if>
             <if test="intervalDays != null">
                 interval_days,
+            </if>
+            <if test="enhanceDays != null">
+                enhance_days,
             </if>
             create_time,
             update_time,
@@ -114,6 +123,9 @@
             <if test="intervalDays != null">
                 #{intervalDays},
             </if>
+            <if test="enhanceDays != null">
+                #{enhanceDays},
+            </if>
             NOW(),
             NOW(),
             <if test="createUserId != null and createUserId != ''">
@@ -138,6 +150,7 @@
             <if test="periodUnit != null">period_unit = #{periodUnit},</if>
             <if test="injectionTimes != null and injectionTimes != ''">injection_times = #{injectionTimes},</if>
             <if test="intervalDays != null">interval_days = #{intervalDays},</if>
+            <if test="enhanceDays != null">enhance_days = #{enhanceDays},</if>
             update_time = NOW(),
             <if test="updateUserId != null and updateUserId != ''">update_user_id = #{updateUserId},</if>
         </set>
@@ -206,6 +219,85 @@
         FROM vaccine_info vi
         WHERE FIND_IN_SET(#{breedId}, vi.breed_ids)
         ORDER BY vi.vaccine_name ASC
+    </select>
+
+    <select id="selectSuggestVaccine" resultType="com.jacob.common.model.petConfig.entity.VaccineInfo">
+        SELECT
+            vi.*,
+
+            CASE
+                WHEN COUNT(pr.record_id) = 0 THEN '未接种'
+                WHEN COUNT(pr.record_id) &lt; CAST(vi.injection_times AS UNSIGNED) THEN '未完成'
+                WHEN COUNT(pr.record_id) >= CAST(vi.injection_times AS UNSIGNED)
+                AND vi.enhance_days IS NOT NULL
+                AND DATEDIFF(CURDATE(), MAX(pr.injection_date)) >= vi.enhance_days
+                    THEN '需加强针'
+            END AS suggest_type,
+
+            CASE
+                WHEN COUNT(pr.record_id) = 0
+                    THEN CURDATE()
+                WHEN COUNT(pr.record_id) &lt; CAST(vi.injection_times AS UNSIGNED)
+                    THEN DATE_ADD(MAX(pr.injection_date), INTERVAL vi.interval_days DAY)
+                WHEN COUNT(pr.record_id) >= CAST(vi.injection_times AS UNSIGNED)
+                AND vi.enhance_days IS NOT NULL
+                    THEN DATE_ADD(MAX(pr.injection_date), INTERVAL vi.enhance_days DAY)
+            END AS next_injection_date,
+            -- 是否已预约
+            CASE
+                WHEN COUNT(pe.event_id) > 0 THEN 1
+                ELSE 0
+            END AS has_appointment,
+
+            MAX(pr.injection_date) as last_injection_date
+
+        FROM vaccine_info vi
+        LEFT JOIN pet_vaccine_record pr
+        ON vi.vaccine_id = pr.vaccine_id
+        AND pr.pet_id = #{petId}
+
+        LEFT JOIN pet_event pe
+        ON pe.pet_id = #{petId}
+        AND pe.event_type = 1
+        AND pe.status = 0
+        AND pe.event_content LIKE CONCAT('%', vi.vaccine_name, '%')
+
+        WHERE FIND_IN_SET(#{breedId}, vi.breed_ids)
+
+        GROUP BY vi.vaccine_id
+
+        HAVING
+        (
+            COUNT(pr.record_id) = 0
+            OR COUNT(pr.record_id) &lt; CAST(vi.injection_times AS UNSIGNED)
+            OR (
+                COUNT(pr.record_id) >= CAST(vi.injection_times AS UNSIGNED)
+                AND vi.enhance_days IS NOT NULL
+                AND DATEDIFF(CURDATE(), MAX(pr.injection_date)) >= vi.enhance_days
+            )
+        )
+        -- 只要未预约的
+        AND COUNT(pe.event_id) = 0
+    </select>
+
+    <select id="getVaccineCover" resultType="com.jacob.common.model.petData.vo.VaccineCoverVo">
+        SELECT
+            vi.vaccine_id,
+            vi.vaccine_name,
+            CAST(vi.injection_times AS UNSIGNED) AS required_times,
+            IFNULL(COUNT(pr.record_id), 0) AS actual_times,
+            CASE
+                WHEN COUNT(pr.record_id) >= CAST(vi.injection_times AS UNSIGNED) THEN 1
+                ELSE 0
+                END AS is_completed,
+            CASE
+                WHEN COUNT(pr.record_id) >= CAST(vi.injection_times AS UNSIGNED) THEN 0
+                ELSE CAST(vi.injection_times AS UNSIGNED) - COUNT(pr.record_id)
+                END AS missing_times
+        FROM vaccine_info vi
+                 LEFT JOIN pet_vaccine_record pr ON vi.vaccine_id = pr.vaccine_id AND pr.pet_id = #{petId}
+        WHERE FIND_IN_SET(#{breedId}, vi.breed_ids)
+        GROUP BY vi.vaccine_id
     </select>
 
 </mapper>

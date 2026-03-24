@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PetWeightRecordDao extends SqlDao<PetWeightRecord> {
+    PetWeightRecord selectLatestByPetId(String petId);
 }

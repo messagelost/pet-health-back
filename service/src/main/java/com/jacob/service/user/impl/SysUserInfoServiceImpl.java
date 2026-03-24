@@ -7,6 +7,7 @@ import com.jacob.common.utils.JwtUtil;
 import com.jacob.dao.base.SqlDao;
 import com.jacob.dao.mappers.user.SysUserInfoDao;
 import com.jacob.service.base.impl.BaseServiceImpl;
+import com.jacob.service.petData.PetBasicInfoService;
 import com.jacob.service.user.SysUserInfoService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,8 @@ public class SysUserInfoServiceImpl extends BaseServiceImpl<SysUserInfoDao,SysUs
     private JwtUtil jwtUtil;
     @Resource(name = "userExecutor")
     private Executor userExecutor;
+    @Autowired
+    private PetBasicInfoService petBasicInfoService;
 
     @Override
     public SqlDao getDao() {
@@ -59,7 +62,10 @@ public class SysUserInfoServiceImpl extends BaseServiceImpl<SysUserInfoDao,SysUs
 
         sysUserInfo.setLastLoginTime(LocalDateTime.now());
         sysUserInfo.setLastLoginIp("");
-        userExecutor.execute(() -> updateWithBean(sysUserInfo));
+        userExecutor.execute(() -> {
+            updateWithBean(sysUserInfo);
+            petBasicInfoService.updatePetByUserId(sysUserInfo.getUserId());
+        });
 
         return vo;
     }
