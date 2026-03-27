@@ -40,4 +40,13 @@ public class PetActivityCoefficientServiceImpl extends BaseServiceImpl<PetActivi
         }
         return BigDecimal.ZERO;
     }
+
+    @Override
+    public boolean isNutrition(String text) {
+        return text.contains("蛋白")
+                || text.contains("脂肪")
+                || text.contains("钙")
+                || text.contains("磷")
+                || text.contains("赖氨酸");
+    }
 }

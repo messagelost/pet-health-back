@@ -7,6 +7,10 @@ public class NutrientDto {
 
     private String name;
 
-    private String value;
+    private String percent;
 
+    public NutrientDto(String name, String percent) {
+        this.name = name;
+        this.percent = percent;
+    }
 }

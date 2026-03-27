@@ -1,17 +1,10 @@
 package com.jacob.web.system;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.jacob.common.model.base.ResponseVO;
-import com.jacob.common.model.petData.dto.NutrientDto;
 import com.jacob.common.utils.ImageUtils;
+import com.jacob.common.utils.OrcUtils;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,12 +12,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -126,36 +115,9 @@ public class SysCommonController {
 
     }
 
-    public static final OkHttpClient HTTP_CLIENT = new OkHttpClient().newBuilder().readTimeout(300, TimeUnit.SECONDS).build();
-
     @PostMapping("/upload/ocr")
-    public ResponseVO<String> ocrScan(@RequestParam("file") MultipartFile file) throws IOException {
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        String base64 = Base64.getEncoder().encodeToString(file.getBytes());
-        base64 = URLEncoder.encode(base64, "utf-8");
-        okhttp3.RequestBody body = okhttp3.RequestBody.create(mediaType, "image="+base64);
-        Request request = new Request.Builder()
-                .url("https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic?access_token=" + getAccessToken())
-                .method("POST", body)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addHeader("Accept", "application/json")
-                .build();
-        Response response = HTTP_CLIENT.newCall(request).execute();
-        JSONObject jsonObject = JSONObject.parseObject(response.body().string());
-        log.info("百度OCR返回结果：{}", jsonObject);
-        return ResponseVO.success();
-    }
-
-    private String getAccessToken() throws IOException {
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        okhttp3.RequestBody body = okhttp3.RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + API_KEY
-                + "&client_secret=" + SECRET_KEY);
-        Request request = new Request.Builder()
-                .url("https://aip.baidubce.com/oauth/2.0/token")
-                .method("POST", body)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .build();
-        Response response = HTTP_CLIENT.newCall(request).execute();
-        return JSONObject.parseObject(response.body().string()).getString("access_token");
+    public ResponseVO<JSONObject> ocrScan(@RequestParam("file") MultipartFile file) throws IOException {
+        JSONObject jsonObject = OrcUtils.ocrRegularScan(file);
+        return ResponseVO.success(jsonObject);
     }
 }

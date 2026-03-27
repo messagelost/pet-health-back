@@ -7,4 +7,6 @@ import java.math.BigDecimal;
 
 public interface PetActivityCoefficientService extends BaseService<PetActivityCoefficient> {
     BigDecimal getPetActivityCoefficient(String petId, String breedId);
+
+    boolean isNutrition(String name);
 }

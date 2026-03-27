@@ -1,25 +1,34 @@
 package com.jacob.web.healthManage;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jacob.common.annotation.ApiPermission;
 import com.jacob.common.model.base.ResponseVO;
 import com.jacob.common.model.petConfig.entity.PetActivityCoefficient;
+import com.jacob.common.model.petData.dto.NutrientDto;
 import com.jacob.common.model.petData.entity.PetBasicInfo;
 import com.jacob.common.model.petData.entity.PetNutritionIntake;
 import com.jacob.common.model.petData.entity.PetVaccineRecord;
 import com.jacob.common.model.petData.vo.PetIntakeVo;
 import com.jacob.common.utils.JwtUtil;
+import com.jacob.common.utils.OrcUtils;
 import com.jacob.common.utils.SnowflakeIdGenerator;
 import com.jacob.service.petConfig.PetActivityCoefficientService;
 import com.jacob.service.petData.PetBasicInfoService;
 import com.jacob.service.petData.PetNutritionIntakeService;
 import com.jacob.service.petData.PetWeightRecordService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/petNutrition")
 public class petNutritionController {
@@ -65,11 +74,39 @@ public class petNutritionController {
     public ResponseVO<PetIntakeVo> getInfo(){
         PetIntakeVo vo = new PetIntakeVo();
         List<PetBasicInfo> petList = petBasicInfoService.getMyPetList(new PetBasicInfo());
+        vo.setPetList(petList);
         petList.forEach(pet -> {
             BigDecimal val = petActivityCoefficientService.getPetActivityCoefficient(pet.getPetId(),pet.getBreedId());
             BigDecimal der = petWeightRecordService.getDer(pet.getPetId(), val);
         });
 
         return ResponseVO.success(vo);
+    }
+
+    @PostMapping("/ocr")
+    @RequiresPermissions("health:petNutrition:ocr")
+    @ApiPermission(code = "health:petNutrition:ocr", name = "扫描图片提取营养成分")
+    public ResponseVO<List<NutrientDto>> ocrScan(@RequestParam("file") MultipartFile file) throws IOException {
+        JSONObject jsonObject = OrcUtils.ocrRegularScan(file);
+        List<NutrientDto> nList = new ArrayList<>();
+        JSONArray arr = jsonObject.getJSONArray("words_result");
+        for (int i = 0; i < arr.size(); i++) {
+            String text = arr.getJSONObject(i).getString("words");
+            // 找到百分比
+            if (text.contains("%")) {
+                String percent = text.replaceAll("[^0-9.]", "");
+                // 向前找营养名称
+                for (int j = i - 1; j >= 0 && j >= i - 3; j--) {
+                    String name = arr.getJSONObject(j).getString("words");
+                    if (petActivityCoefficientService.isNutrition(name)) {
+                        NutrientDto dto = new NutrientDto(name,  percent);
+                        nList.add(dto);
+                        break;
+                    }
+                }
+            }
+        }
+        log.info("识别结果：{}", nList);
+        return ResponseVO.success(nList);
     }
 }
